@@ -4,9 +4,25 @@
 
 "/home":
     defaults: "HomeController:render"
-"/home/<param=1 {/^\\d+$/}>":
-    defaults: "HomeController:list:$param"
 
+"/login":
+    defaults: "LoginController:render"
+"/login/handleLogin":
+    defaults: "LoginController:handleLogin"
 
 "/error/<param=404>":
     defaults: "ErrorController:render$param"
+
+#PRIVATE ROUTES
+
+"/user-dashboard":
+    defaults: "DashboardController:render"
+
+"/marks":
+    defaults: "MarksController:render"
+
+"/personal-info":
+    defaults: "PersonalInfoController:render"
+
+
+

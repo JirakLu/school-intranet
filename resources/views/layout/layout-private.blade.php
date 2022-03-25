@@ -13,11 +13,11 @@
 
 </head>
 <body id="body">
-    <main class="overflow-hidden relative h-screen w-screen bg-gray-50">
-        @include("components.navbar")
+<main class="overflow-hidden relative h-full w-full">
+    @include("components.navbar")
 
-        @yield("content")
-    </main>
-    <script src="{{ mix("js/app.js") }}" defer></script>
+    @yield("content")
+</main>
+<script src="{{ mix("js/app.js") }}" defer></script>
 </body>
 </html>
