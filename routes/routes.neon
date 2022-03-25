@@ -1,0 +1,12 @@
+
+"/":
+    defaults: "HomeController:render"
+
+"/home":
+    defaults: "HomeController:render"
+"/home/<param=1 {/^\\d+$/}>":
+    defaults: "HomeController:list:$param"
+
+
+"/error/<param=404>":
+    defaults: "ErrorController:render$param"

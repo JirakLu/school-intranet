@@ -1,0 +1,10 @@
+parameters:
+    level: 6
+    paths:
+        - '%currentWorkingDirectory%/Controllers/'
+        - '%currentWorkingDirectory%/Models/'
+        - '%currentWorkingDirectory%/views/'
+        - '%currentWorkingDirectory%/public/index.php'
+
+    excludePaths:
+        - '%currentWorkingDirectory%/vendor/*'
