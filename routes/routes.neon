@@ -14,8 +14,8 @@
 "/school":
     defaults: "SchoolController:render"
 
-"/prestige":
-    defaults: "PrestigeController:render"
+"/news":
+    defaults: "NewsController:render"
 
 
 "/login":
@@ -36,6 +36,9 @@
 
 "/personal-info":
     defaults: "PersonalInfoController:render"
+
+"/files":
+    defaults: "FilesController:render"
 
 "/absence":
     defaults: "AbsenceController:render"

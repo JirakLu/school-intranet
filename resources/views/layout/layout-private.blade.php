@@ -13,7 +13,7 @@
 
 </head>
 <body id="body">
-<div class="overflow-hidden relative h-screen w-screen bg-gray-50">
+<div class="relative h-screen w-screen bg-gray-50">
     <!-- This example requires Tailwind CSS v2.0+ -->
     <div x-data="{showMenu: false}">
         <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
@@ -88,62 +88,83 @@
                              src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
                              alt="Workflow">
                     </div>
-                    <nav class="mt-5 px-2 space-y-1">
-                        <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-                        <a href="{{$createLink("dashboard")}}"
-                           class="group flex items-center px-2 py-2 text-base font-medium rounded-md
+                    <nav class="mt-5 px-2 flex flex-col justify-between h-[calc(100vh-170px)]">
+                        <div class="space-y-2">
+                            <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
+                            <a href="{{$createLink("dashboard")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
                            {{$getActiveUrl() === "/dashboard" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
-                        <!--
-                              Heroicon name: outline/home
+                                <!--
+                                      Heroicon name: outline/home
 
-                              Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500"
-                            -->
-                            <svg class="{{$getActiveUrl() === "/dashboard" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6" xmlns="http://www.w3.org/2000/svg"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                            </svg>
-                            Dashboard
-                        </a>
+                                      Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500"
+                                    -->
+                                <svg class="{{$getActiveUrl() === "/dashboard" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                </svg>
+                                Dashboard
+                            </a>
 
-                        <a href="{{$createLink("marks")}}"
-                           class="group flex items-center px-2 py-2 text-base font-medium rounded-md
+                            <a href="{{$createLink("marks")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
                            {{$getActiveUrl() === "/marks" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
-                            <!-- Heroicon name: outline/users -->
-                            <svg class="{{$getActiveUrl() === "/marks" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
-                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-                            </svg>
-                            Známky
-                        </a>
+                                <!-- Heroicon name: outline/users -->
+                                <svg class="{{$getActiveUrl() === "/marks" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                                </svg>
+                                Známky
+                            </a>
 
-                        <a href="{{$createLink("absence")}}"
-                           class="group flex items-center px-2 py-2 text-base font-medium rounded-md
+                            <a href="{{$createLink("absence")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
                            {{$getActiveUrl() === "/absence" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
-                            <!-- Heroicon name: outline/folder -->
-                            <svg class="{{$getActiveUrl() === "/absence" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
-                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            Absence
-                        </a>
+                                <!-- Heroicon name: outline/folder -->
+                                <svg class="{{$getActiveUrl() === "/absence" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Absence
+                            </a>
 
-                        <a href="{{$createLink("home")}}"
-                           class="group flex items-center px-2 py-2 text-base font-medium rounded-md
+                            <a href="{{$createLink("files")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
+                           {{$getActiveUrl() === "/files" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
+                                <!-- Heroicon name: outline/folder -->
+                                <svg class="{{$getActiveUrl() === "/files" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                </svg>
+                                Soubory
+                            </a>
+
+                        </div>
+
+                        <div class="space-y-2">
+                            <a href="{{$createLink("home")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
                            {{$getActiveUrl() === "/home" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
-                            <!-- Heroicon name: outline/calendar -->
-                            <svg class="{{$getActiveUrl() === "/home" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
-                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                            </svg>
-                            Zpět na hlavní stránku
-                        </a>
+                                <!-- Heroicon name: outline/calendar -->
+                                <svg class="{{$getActiveUrl() === "/home" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                Zpět na hlavní stránku
+                            </a>
+                        </div>
                     </nav>
                 </div>
                 <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
@@ -156,7 +177,8 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-base font-medium text-gray-700 group-hover:text-gray-900">Adam Pepega</p>
-                                <p class="text-sm font-medium text-gray-500 group-hover:text-gray-700">Osobní informace</p>
+                                <p class="text-sm font-medium text-gray-500 group-hover:text-gray-700">Osobní
+                                    informace</p>
                             </div>
                         </div>
                     </a>
@@ -173,11 +195,11 @@
             <!-- Sidebar component, swap this element with another sidebar if you like -->
             <div class="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
                 <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                    <div class="flex items-center flex-shrink-0 px-4">
+                    <a href="{{$createLink("home")}}" class="flex items-center flex-shrink-0 px-4">
                         <img class="h-8 w-auto"
                              src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
                              alt="Workflow">
-                    </div>
+                    </a>
                     <nav class="mt-5 flex-1 px-2 bg-white flex flex-col justify-between" aria-label="Sidebar">
                         <!-- Current: "bg-gray-100 text-gray-900 hover:text-gray-900 hover:bg-gray-100", Default: "text-gray-600 hover:text-gray-900 hover:bg-gray-50" -->
                         <div class="space-y-4">
@@ -197,10 +219,11 @@
                     {{$getActiveUrl() === "/marks" ? "bg-gray-100 text-gray-900 hover:text-gray-900 hover:bg-gray-100" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"}}">
                                 <svg class="{{$getActiveUrl() === "/marks" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-3 flex-shrink-0 h-6 w-6"
                                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     stroke="currentColor"
-                                     aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                     stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
                                 </svg>
                                 <span class="flex-1"> Známky </span>
                             </a>
@@ -216,6 +239,17 @@
                                 </svg>
                                 <span class="flex-1"> Absence </span>
                             </a>
+                            <a href="{{$createLink("files")}}"
+                               class="group flex items-center px-2 py-2 text-sm font-medium rounded-md w-56
+                    {{$getActiveUrl() === "/files" ? "bg-gray-100 text-gray-900 hover:text-gray-900 hover:bg-gray-100" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"}}">
+                                <svg class="{{$getActiveUrl() === "/files" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-3 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                </svg>
+                                <span class="flex-1"> Soubory </span>
+                            </a>
                         </div>
 
                         <div>
@@ -228,7 +262,7 @@
                                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke="currentColor"
                                      aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                 </svg>
                                 <span class="flex-1"> Zpět na hlavní stránku </span>
@@ -246,7 +280,8 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Adam Pepega</p>
-                                <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Osobní informace</p>
+                                <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Osobní
+                                    informace</p>
                             </div>
                         </div>
                     </a>
