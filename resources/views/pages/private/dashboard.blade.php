@@ -10,7 +10,7 @@
             <div class="py-4 mt-4 md:mt-16 flex flex-col gap-16">
                 <!-- This example requires Tailwind CSS v2.0+ -->
                 <div>
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Studijí úspěchy 🥳</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Studijní úspěchy 🥳</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
                         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                             <dt class="text-sm font-medium text-gray-500 truncate">Odstudovaných hodin</dt>
@@ -29,7 +29,7 @@
                     </dl>
                 </div>
 
-                <div class="flex flex-col lg:flex-row gap-4">
+                <div class="flex flex-col lg:flex-row gap-5">
                     <div class="w-full space-y-2">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Nedávné známky</h3>
                         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 flex flex-col gap-4 justify-between h-full">

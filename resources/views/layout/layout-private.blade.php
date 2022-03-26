@@ -13,7 +13,7 @@
 
 </head>
 <body id="body">
-<div class="relative h-screen w-screen bg-gray-50">
+<div class="relative min-h-screen min-w-screen bg-gray-100">
     <!-- This example requires Tailwind CSS v2.0+ -->
     <div x-data="{showMenu: false}">
         <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->

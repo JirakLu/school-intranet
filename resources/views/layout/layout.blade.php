@@ -13,7 +13,7 @@
 
 </head>
 <body id="body">
-    <main class="overflow-hidden relative h-screen w-screen bg-gray-50">
+    <main class="overflow-hidden relative h-screen w-screen bg-gray-100">
         @include("components.navbar")
 
         <div class="w-full h-full px-5 md:px-0">
