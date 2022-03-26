@@ -33,18 +33,22 @@
                     <div class="w-full space-y-2">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Nedávné známky</h3>
                         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 flex flex-col gap-4 justify-between h-full">
-                            <div class="space-y-4">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Dnes</h3>
-                                <div class="flex flex-row gap-3 flex-wrap">
-                                    @foreach([0,1,2] as $mark)
-                                        @include("components.mark", ["subject" => "Ma", "mark" => 5])
-                                    @endforeach
+                            <div class="flex flex-col justify-around h-full">
+                                <div class="space-y-4">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Dnes</h3>
+                                    <div class="flex flex-row gap-3 flex-wrap">
+                                        @foreach([0,1,2] as $mark)
+                                            @include("components.mark", ["subject" => "Ma", "mark" => 5])
+                                        @endforeach
+                                    </div>
                                 </div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Minulý týden</h3>
-                                <div class="flex flex-row gap-3 flex-wrap">
-                                    @foreach([0,1,2,3,4,5,6,7,8,9] as $mark)
-                                        @include("components.mark", ["subject" => "Čj", "mark" => 5])
-                                    @endforeach
+                                <div class="space-y-4">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Minulý týden</h3>
+                                    <div class="flex flex-row gap-3 flex-wrap">
+                                        @foreach([0,1,2,3,4,5,6,7,8,9] as $mark)
+                                            @include("components.mark", ["subject" => "Čj", "mark" => 5])
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                             <div class="grid place-items-center mt-4">
@@ -97,5 +101,5 @@
         </div>
         <!-- /End replace -->
     </div>
-    </div>
+
 @endsection
