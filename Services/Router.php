@@ -143,6 +143,7 @@ class Router
      */
     public function createLink(string $link): string
     {
+
         return "http://{$this->domain}/{$this->basePath}/$link";
     }
 

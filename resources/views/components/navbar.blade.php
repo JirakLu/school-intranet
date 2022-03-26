@@ -21,10 +21,11 @@
                 </button>
             </div>
             <nav class="hidden md:flex space-x-10">
-                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900"> Učitelé </a>
-                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900"> Rozvrh </a>
-                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900"> Škola </a>
-                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900"> Naše prestiž </a>
+                <!-- Item active: "text-gray-900", Item inactive: "text-gray-500" -->
+                <a href="{{$createLink("teachers")}}" class="text-base font-medium hover:text-gray-900 {{$getActiveUrl() === "/teachers" ? "text-gray-900" : "text-gray-500"}}"> Učitelé </a>
+                <a href="{{$createLink("schedule")}}" class="text-base font-medium hover:text-gray-900 {{$getActiveUrl() === "/schedule" ? "text-gray-900" : "text-gray-500"}}"> Rozvrh </a>
+                <a href="{{$createLink("school")}}" class="text-base font-medium hover:text-gray-900 {{$getActiveUrl() === "/school" ? "text-gray-900" : "text-gray-500"}}"> Škola </a>
+                <a href="{{$createLink("prestige")}}" class="text-base font-medium hover:text-gray-900 {{$getActiveUrl() === "/prestige" ? "text-gray-900" : "text-gray-500"}}"> Naše prestiž </a>
             </nav>
             <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
                 <a href="{{$createLink("login")}}"
@@ -66,7 +67,7 @@
                 </div>
                 <div class="mt-6">
                     <nav class="grid gap-y-8">
-                        <a href="#" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
+                        <a href="{{$createLink("teachers")}}" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
                             <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -75,7 +76,7 @@
                             <span class="ml-3 text-base font-medium text-gray-900"> Učitelé </span>
                         </a>
 
-                        <a href="#" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
+                        <a href="{{$createLink("schedule")}}" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
                             <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -84,7 +85,7 @@
                             <span class="ml-3 text-base font-medium text-gray-900"> Rozvrh </span>
                         </a>
 
-                        <a href="#" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
+                        <a href="{{$createLink("school")}}" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
                             <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -93,7 +94,7 @@
                             <span class="ml-3 text-base font-medium text-gray-900"> Škola </span>
                         </a>
 
-                        <a href="#" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
+                        <a href="{{$createLink("prestige")}}" class="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50">
                             <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -5,6 +5,19 @@
 "/home":
     defaults: "HomeController:render"
 
+"/teachers":
+    defaults: "TeachersController:render"
+
+"/schedule":
+    defaults: "ScheduleController:render"
+
+"/school":
+    defaults: "SchoolController:render"
+
+"/prestige":
+    defaults: "PrestigeController:render"
+
+
 "/login":
     defaults: "LoginController:render"
 "/login/handleLogin":
@@ -15,7 +28,7 @@
 
 #PRIVATE ROUTES
 
-"/user-dashboard":
+"/dashboard":
     defaults: "DashboardController:render"
 
 "/marks":
@@ -23,6 +36,9 @@
 
 "/personal-info":
     defaults: "PersonalInfoController:render"
+
+"/absence":
+    defaults: "AbsenceController:render"
 
 
 

@@ -12,6 +12,7 @@ class LoginController extends AController
     public function handleLogin(): void
     {
         print_r($_POST);
+        // TODO: Handle login
         $this->forward("LoginController","render");
     }
 }
