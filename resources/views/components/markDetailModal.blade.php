@@ -1,5 +1,6 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
-<div x-show="markDetailModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div x-show="markDetailModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+     aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <!--
           Background overlay, show/hide based on modal state.
@@ -41,24 +42,49 @@
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              @click.outside="markDetailModal = false"
-             class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-            <div class="sm:flex sm:items-start">
-                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <!-- Heroicon name: outline/exclamation -->
-                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                </div>
-                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Deactivate account</h3>
-                    <div class="mt-2">
-                        <p class="text-sm text-gray-500">Are you sure you want to deactivate your account? All of your data will be permanently removed from our servers forever. This action cannot be undone.</p>
+             class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:p-6">
+            <h3 class="text-2xl font-normal">
+                Detail známky
+            </h3>
+            <div class="flex flex-col divide-gray-300 divide-y-2">
+                <div class="flex flex-col md:flex-row gap-3 mt-3 justify-between py-5 px-5">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-gray-600 font-semibold text-sm">Známka</h3>
+                        <p x-text="markDetailData.mark" class="text-lg font-bold"></p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-gray-600 font-semibold text-sm">Váha</h3>
+                        <p x-text="markDetailData.weight" class="text-lg font-bold"></p>
                     </div>
                 </div>
-            </div>
-            <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Deactivate</button>
-                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
+                <div class="flex flex-col gap-1 py-5 px-5">
+                    <h3 class="text-gray-600 font-semibold text-sm">Látka</h3>
+                    <p x-text="markDetailData.sub_type" class="text-sm font-normal"></p>
+                </div>
+                <div class="flex flex-col gap-1 py-5 px-5">
+                    <h3 class="text-gray-600 font-semibold text-sm">Učitel</h3>
+                    <p x-text="markDetailData.teacher" class="text-sm font-normal"></p>
+                </div>
+                <div class="flex flex-col gap-1 py-5 px-5">
+                    <h3 class="text-gray-600 font-semibold text-sm">Kategorie</h3>
+                    <p x-text="markDetailData.category" class="text-sm font-normal"></p>
+                </div>
+                <div class="flex flex-col gap-1 py-5 px-5">
+                    <h3 class="text-gray-600 font-semibold text-sm">Poznámka</h3>
+                    <p x-text="markDetailData.desc ? markDetailData.desc : 'Nejsou žádné poznámky'" class="text-sm font-normal"></p>
+                </div>
+                <div class="flex flex-row justify-between items-center">
+                    <h3 x-text="markDetailData.date" class="text-gray-800 font-thin text-sm py-5"></h3>
+                    <!-- Heroicon name: solid/exclamation -->
+                    <svg class="cursor-pointer h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 20 20"
+                         fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                              clip-rule="evenodd"/>
+                    </svg>
+
+                </div>
             </div>
         </div>
     </div>
