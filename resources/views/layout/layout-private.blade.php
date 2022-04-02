@@ -176,7 +176,7 @@
                                      alt="">
                             </div>
                             <div class="ml-3">
-                                <p class="text-base font-medium text-gray-700 group-hover:text-gray-900">Adam Pepega</p>
+                                <p class="text-base font-medium text-gray-700 group-hover:text-gray-900">{{\App\Session\Session::getFirstName() . " " . \App\Session\Session::getLastName()}}</p>
                                 <p class="text-sm font-medium text-gray-500 group-hover:text-gray-700">Osobní
                                     informace</p>
                             </div>
@@ -279,7 +279,7 @@
                                      alt="">
                             </div>
                             <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Adam Pepega</p>
+                                <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">{{\App\Session\Session::getFirstName() . " " . \App\Session\Session::getLastName()}}</p>
                                 <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Osobní
                                     informace</p>
                             </div>

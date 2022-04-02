@@ -33,16 +33,20 @@
                             <div class="flex items-center">
                                 <input id="remember-me" name="remember-me" type="checkbox"
                                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Zapamatovat si
-                                    mě </label>
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Zapamatovat si mě </label>
                             </div>
 
                             <div class="text-sm">
                                 <a onclick="alert('Tak máte smůlu.')"
-                                   class="font-medium text-indigo-600 hover:text-indigo-500"> Zapomněli jste
-                                    heslo? </a>
+                                   class="font-medium text-indigo-600 hover:text-indigo-500"> Zapomněli jste heslo? </a>
                             </div>
                         </div>
+
+                        @if(\App\Session\Session::getShowError())
+                            <div>
+                                <p class="text-sm font-normal text-red-500">{{\App\Session\Session::getErrors()}}</p>
+                            </div>
+                        @endif
 
                         <div>
                             <button type="submit"

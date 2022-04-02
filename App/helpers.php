@@ -1,5 +1,8 @@
 <?php
 
+use App\Session\Session;
+use App\Session\SessionClass;
+
 if (!function_exists("mix")) {
     /**
      * @throws Exception
@@ -13,3 +16,30 @@ if (!function_exists("mix")) {
         return "http://$domain/". $basePath  . "/public" . $manifest["/$path"];
     }
 }
+
+if (!function_exists("setError")) {
+
+    function setError(string $error): void
+    {
+        Session::setShowError(true);
+        Session::setErrors($error);
+    }
+}
+
+if (!function_exists("cleanError")) {
+
+    function cleanError(): void
+    {
+        Session::setShowError(false);
+        Session::setErrors("");
+    }
+}
+
+if (!function_exists("cleanSession")) {
+
+    function cleanSession(): void
+    {
+        $_SESSION["appInfo"] = serialize(new SessionClass());
+    }
+}
+

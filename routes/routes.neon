@@ -43,5 +43,10 @@
 "/absence":
     defaults: "AbsenceController:render"
 
+#DB FILLER
+
+"/filler":
+    defaults: "FillerController:render"
+
 
 

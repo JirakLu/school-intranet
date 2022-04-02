@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\LoginModel;
+
 class LoginController extends AController
 {
     public function render(): void
@@ -11,8 +13,14 @@ class LoginController extends AController
 
     public function handleLogin(): void
     {
-        print_r($_POST);
         // TODO: Handle login
-        $this->forward("LoginController","render");
+        $model = new LoginModel();
+        $success = $model->handleLogin();
+
+        if ($success) {
+            $this->redirect("dashboard");
+        } else {
+            $this->redirect("login");
+        }
     }
 }

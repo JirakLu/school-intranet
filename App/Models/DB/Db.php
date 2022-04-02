@@ -11,6 +11,17 @@ class Db
 {
     private PDO $connection;
 
+    private static Db|null $instance = null;
+
+    public static function getInstance(): Db
+    {
+        if (self::$instance == null){
+            self::$instance = new Db();
+        }
+        return self::$instance;
+
+    }
+
     /**
      * @throws Exception
      */
