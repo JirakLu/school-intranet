@@ -23,4 +23,10 @@ class LoginController extends AController
             $this->redirect("login");
         }
     }
+
+    public function logout(): void
+    {
+        cleanSession();
+        $this->redirect("home");
+    }
 }

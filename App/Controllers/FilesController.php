@@ -2,11 +2,16 @@
 
 namespace App\Controllers;
 
+use App\Session\Session;
+
 class FilesController extends AController
 {
     public function render(): void
     {
-        // TODO: authenticate
-        $this->renderView("pages.private.files");
+        if (Session::getIsLoggedIn()) {
+            $this->renderView("pages.private.files");
+        } else {
+            $this->redirect("restricted");
+        }
     }
 }

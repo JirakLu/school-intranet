@@ -252,7 +252,7 @@
                             </a>
                         </div>
 
-                        <div>
+                        <div class="space-y-4">
                             <a href="{{$createLink("home")}}"
                                class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md w-56">
                                 <!--
@@ -266,6 +266,20 @@
                                           d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                 </svg>
                                 <span class="flex-1"> Zpět na hlavní stránku </span>
+                            </a>
+
+                            <a href="{{$createLink("login/logout")}}"
+                               class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md w-56">
+                                <!--
+                                      Heroicon name: outline/home
+                                -->
+                                <svg class="text-gray-400 group-hover:text-gray-500 mr-3 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span class="flex-1"> Odhlásit se </span>
                             </a>
                         </div>
                     </nav>

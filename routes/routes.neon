@@ -17,11 +17,15 @@
 "/news":
     defaults: "NewsController:render"
 
+"/restricted":
+    defaults: "RestrictedController:render"
 
 "/login":
     defaults: "LoginController:render"
 "/login/handleLogin":
     defaults: "LoginController:handleLogin"
+"/login/logout":
+    defaults: "LoginController:logout"
 
 "/error/<param=404>":
     defaults: "ErrorController:render$param"
