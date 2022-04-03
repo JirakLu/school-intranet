@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Session\Session;
 use Error;
 use Jenssegers\Blade\Blade;
 use Services\Router;
@@ -74,9 +75,9 @@ abstract class AController
      */
     protected function renderView(string $view, array $params = []): void
     {
-        $router = [ "generateBase" => fn() => $this->router->generateBase(),
-                    "getActiveUrl" => fn() => $this->router->getActiveURL(),
-                    "createLink" => fn($link) => $this->router->createLink($link)];
+        $router = ["generateBase" => fn() => $this->router->generateBase(),
+            "getActiveUrl" => fn() => $this->router->getActiveURL(),
+            "createLink" => fn($link) => $this->router->createLink($link)];
 
         echo $this->blade->make($view, array_merge($params, $router))->render();
     }

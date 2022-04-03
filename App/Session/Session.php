@@ -14,6 +14,15 @@ namespace App\Session;
 
 class Session {
 
+    public static function start(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION["appInfo"])) {
+            $_SESSION["appInfo"] = serialize(new SessionClass());
+        }
+    }
+
     public static function setEmail(string $email): void
     {
         $session = unserialize($_SESSION["appInfo"]);

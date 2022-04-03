@@ -153,16 +153,27 @@
 
                         <div class="space-y-2">
                             <a href="{{$createLink("home")}}"
-                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md
-                           {{$getActiveUrl() === "/home" ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}}">
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                                 <!-- Heroicon name: outline/calendar -->
-                                <svg class="{{$getActiveUrl() === "/home" ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500"}} mr-4 flex-shrink-0 h-6 w-6"
+                                <svg class="text-gray-400 group-hover:text-gray-500 mr-4 flex-shrink-0 h-6 w-6"
                                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                 </svg>
                                 Zpět na hlavní stránku
+                            </a>
+
+                            <a href="{{$createLink("login/logout")}}"
+                               class="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                                <!-- Heroicon name: outline/calendar -->
+                                <svg class="text-gray-400 group-hover:text-gray-500 mr-4 flex-shrink-0 h-6 w-6"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Odhlásit se
                             </a>
                         </div>
                     </nav>
