@@ -9,8 +9,7 @@ class DashboardController extends AController
     public function render(): void
     {
         if (Session::get("isLoggedIn")) {
-            $this->renderView("pages.private.dashboard",
-                ["firstName" => Session::get("firstName"), "lastName" => Session::get("lastName")]);
+            $this->renderView("pages.private.dashboard");
         } else {
             $this->redirect("restricted");
         }

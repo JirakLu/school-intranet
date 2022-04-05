@@ -9,8 +9,7 @@ class AbsenceController extends AController
     public function render(): void
     {
         if (Session::get("isLoggedIn")) {
-            $this->renderView("pages.private.absence",
-                ["firstName" => Session::get("firstName"), "lastName" => Session::get("lastName")]);
+            $this->renderView("pages.private.absence");
         } else {
             $this->redirect("restricted");
         }

@@ -9,8 +9,7 @@ class FilesController extends AController
     public function render(): void
     {
         if (Session::get("isLoggedIn")) {
-            $this->renderView("pages.private.files",
-                ["firstName" => Session::get("firstName"), "lastName" => Session::get("lastName")]);
+            $this->renderView("pages.private.files");
         } else {
             $this->redirect("restricted");
         }

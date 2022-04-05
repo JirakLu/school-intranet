@@ -45,7 +45,7 @@ class DbFiller
 
     private function fillUsers(): void
     {
-        $test = file_get_contents("https://randomuser.me/api/?results=10&password=uppe,lower,18&inc=email,name,login&nat=US");
+        $test = file_get_contents("https://randomuser.me/api/?results=200&password=uppe,lower,18&inc=email,name,login&nat=US");
         $json = json_decode($test, true);
         $users = array_map(function ($user) {
             return [$user["email"], $user["name"]["first"], $user["name"]["last"], $user["login"]["password"]];

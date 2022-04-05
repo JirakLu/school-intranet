@@ -9,8 +9,7 @@ class LoginController extends AController
 {
     public function render(): void
     {
-        $this->renderView("pages.public.login",
-            ["isLoggedIn" => Session::get("isLoggedIn"), "showError" => Session::get("showError"), "error" => Session::get("error")]);
+        $this->renderView("pages.public.login");
     }
 
     public function handleLogin(): void
@@ -28,7 +27,7 @@ class LoginController extends AController
 
     public function logout(): void
     {
-        Session::start();
+        Session::destroy();
         $this->redirect("home");
     }
 }

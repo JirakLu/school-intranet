@@ -8,6 +8,6 @@ class TeachersController extends AController
 {
     public function render(): void
     {
-        $this->renderView("pages.public.teachers", ["isLoggedIn" => Session::get("isLoggedIn")]);
+        $this->renderView("pages.public.teachers");
     }
 }

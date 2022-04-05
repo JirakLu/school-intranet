@@ -35,7 +35,6 @@
                    class="text-base font-medium hover:text-gray-900 {{$getActiveUrl() === "/news" ? "text-gray-900" : "text-gray-500"}}">
                     Novinky </a>
             </nav>
-            <h1>{{$test}}</h1>
             <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
                 @if($isLoggedIn)
                     <a href="{{$createLink("dashboard")}}"

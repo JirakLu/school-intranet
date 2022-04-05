@@ -9,8 +9,7 @@ class PersonalInfoController extends AController
     public function render(): void
     {
         if (Session::get("isLoggedIn")) {
-            $this->renderView("pages.private.personal-info",
-                ["firstName" => Session::get("firstName"), "lastName" => Session::get("lastName")]);
+            $this->renderView("pages.private.personal-info");
         } else {
             $this->redirect("restricted");
         }

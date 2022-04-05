@@ -6,7 +6,7 @@ use App\Session;
 use Illuminate\View\View;
 
 
-class NavbarComposer
+class Layout_PrivateComposer
 {
 
     public function __construct() {
@@ -21,6 +21,7 @@ class NavbarComposer
      */
     public function compose(View $view)
     {
-        $view->with("isLoggedIn", Session::get("isLoggedIn"));
+        $view->with("firstName", Session::get("firstName"));
+        $view->with("lastName", Session::get("lastName"));
     }
 }

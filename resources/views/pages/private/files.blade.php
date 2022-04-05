@@ -1,4 +1,4 @@
-@extends("layout.layout-private")
+@extends("layout.layout_private")
 
 @section("content")
     <div class="py-6">
