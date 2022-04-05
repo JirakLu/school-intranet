@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Models\User\UserFacade;
-use App\Session\Session;
+use App\Session;
+
 
 class LoginModel
 {
@@ -28,12 +29,14 @@ class LoginModel
             $pepper = get_cfg_var("pepper");
             $psw_peppered = hash_hmac("sha256", $_POST["password"], $pepper);
             if (password_verify($psw_peppered, $user->getPassword())) {
-                Session::setEmail($user->getEmail());
-                Session::setFirstName($user->getFirstName());
-                Session::setLastName($user->getLastName());
-                Session::setUserID($user->getUserID());
-                Session::setIsLoggedIn(true);
+                Session::set("email", $user->getEmail());
+                Session::set("firstName", $user->getFirstName());
+                Session::set("lastName", $user->getLastName());
+                Session::set("userID", $user->getUserID());
+                Session::set("isLoggedIn", true);
+
                 cleanError();
+
                 return true;
             } else {
                 setError("Heslo nesedí.");

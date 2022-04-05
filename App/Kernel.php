@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Session\Session;
 use Jenssegers\Blade\Blade;
 use Services\Router;
 

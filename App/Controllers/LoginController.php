@@ -3,12 +3,14 @@
 namespace App\Controllers;
 
 use App\Models\LoginModel;
+use App\Session;
 
 class LoginController extends AController
 {
     public function render(): void
     {
-        $this->renderView("pages.public.login");
+        $this->renderView("pages.public.login",
+            ["isLoggedIn" => Session::get("isLoggedIn"), "showError" => Session::get("showError"), "error" => Session::get("error")]);
     }
 
     public function handleLogin(): void
@@ -26,7 +28,7 @@ class LoginController extends AController
 
     public function logout(): void
     {
-        cleanSession();
+        Session::start();
         $this->redirect("home");
     }
 }

@@ -16,4 +16,10 @@ class UserFacade {
         return $this->userRepo->getUserByEmail($email);
     }
 
+    public function updateUserLastLogin(string $id): bool
+    {
+//        UPDATE user SET last_login = CURRENT_TIMESTAMP WHERE user_ID = 1;
+        return false;
+    }
+
 }

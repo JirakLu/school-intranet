@@ -1,7 +1,7 @@
 <?php
 
-use App\Session\Session;
-use App\Session\SessionClass;
+
+use App\Session;
 
 if (!function_exists("mix")) {
     /**
@@ -21,8 +21,8 @@ if (!function_exists("setError")) {
 
     function setError(string $error): void
     {
-        Session::setShowError(true);
-        Session::setErrors($error);
+        Session::set("showError", true);
+        Session::set("error", $error);
     }
 }
 
@@ -30,16 +30,9 @@ if (!function_exists("cleanError")) {
 
     function cleanError(): void
     {
-        Session::setShowError(false);
-        Session::setErrors("");
+        Session::set("showError", false);
+        Session::set("error", "");
     }
 }
 
-if (!function_exists("cleanSession")) {
-
-    function cleanSession(): void
-    {
-        $_SESSION["appInfo"] = serialize(new SessionClass());
-    }
-}
 

@@ -8,8 +8,8 @@ class FillerController extends AController
 {
     public function render(): void
     {
-        //TODO: Improve DB filling GUI
+        //TODO: Make DB filling GUI
         $filler = new DbFiller();
-        $filler->fillUsers();
+        $filler->fill();
     }
 }

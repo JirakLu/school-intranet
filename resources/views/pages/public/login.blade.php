@@ -42,9 +42,9 @@
                             </div>
                         </div>
 
-                        @if(\App\Session\Session::getShowError())
+                        @if($showError)
                             <div>
-                                <p class="text-sm font-normal text-red-500">{{\App\Session\Session::getErrors()}}</p>
+                                <p class="text-sm font-normal text-red-500">{{$error}}</p>
                             </div>
                         @endif
 

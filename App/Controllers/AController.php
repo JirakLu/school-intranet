@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Session\Session;
+use App\Views\NavbarComposer;
 use Error;
+use Illuminate\View\View;
 use Jenssegers\Blade\Blade;
 use Services\Router;
 
@@ -67,6 +68,48 @@ abstract class AController
         echo json_encode($jsonData);
     }
 
+    private function addComposer(string $viewsDir): void
+    {
+        $composers = [];
+
+        foreach (glob(__DIR__ . "/../Views/*") as $class) {
+            $className = explode("/", $class);
+            $className = array_pop($className);
+            $className = explode(".", $className);
+            $className = array_shift($className);
+            $composers[$class] = strtolower($className);
+        }
+
+        foreach (glob($viewsDir."/*") as $file) {
+            if (is_dir($file)) {
+                $this->addComposer($file);
+            } else {
+                $fileName = explode("/", "$file");
+                $fileName = array_pop($fileName);
+                $fileName = explode(".", $fileName);
+                $fileName = array_shift($fileName);
+                $fileName = strtolower($fileName . "composer");
+
+
+                if (in_array($fileName, $composers)) {
+                    $classPath = array_search($fileName, $composers);
+
+                    $file = explode("views/", $file);
+                    $file = array_pop($file);
+                    $file = str_replace("/", ".", $file);
+                    $file = str_replace(".blade.php", "", $file);
+
+                    $classPath = explode("Views/", $classPath);
+                    $classPath = array_pop($classPath);
+                    $classPath = str_replace(".php", "", $classPath);
+
+                    $this->blade->composer($file, "App\Views\\$classPath");
+
+                }
+            }
+        }
+
+    }
 
     /**
      * Renders view using blade template engine.
@@ -78,6 +121,9 @@ abstract class AController
         $router = ["generateBase" => fn() => $this->router->generateBase(),
             "getActiveUrl" => fn() => $this->router->getActiveURL(),
             "createLink" => fn($link) => $this->router->createLink($link)];
+
+
+        $this->addComposer(__DIR__."/../../resources/views");
 
         echo $this->blade->make($view, array_merge($params, $router))->render();
     }

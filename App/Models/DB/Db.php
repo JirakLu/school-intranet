@@ -25,7 +25,7 @@ class Db
     /**
      * @throws Exception
      */
-    public function __construct()
+    private function __construct()
     {
         if (!file_exists(dirname(__DIR__, 3) . "/config/db.neon")) {
             throw new Error("db.neon config file does not exists in directory - " . dirname(__DIR__, 3) . "/config/db.neon");
