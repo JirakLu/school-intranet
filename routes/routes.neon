@@ -1,24 +1,24 @@
 
 "/":
-    defaults: "HomeController:render"
+    defaults: "PublicController:renderHome"
 
 "/home":
-    defaults: "HomeController:render"
+    defaults: "PublicController:renderHome"
 
 "/teachers":
-    defaults: "TeachersController:render"
+    defaults: "PublicController:renderTeachers"
 
 "/schedule":
-    defaults: "ScheduleController:render"
+    defaults: "PublicController:renderSchedule"
 
 "/school":
-    defaults: "SchoolController:render"
+    defaults: "PublicController:renderTeachers"
 
 "/news":
-    defaults: "NewsController:render"
+    defaults: "PublicController:renderNews"
 
 "/restricted":
-    defaults: "RestrictedController:render"
+    defaults: "PublicController:renderRestricted"
 
 "/login":
     defaults: "LoginController:render"
@@ -28,7 +28,7 @@
     defaults: "LoginController:logout"
 
 "/error/<param=404>":
-    defaults: "ErrorController:render$param"
+    defaults: "PublicController:renderError$param"
 
 #PRIVATE ROUTES
 
@@ -39,18 +39,18 @@
     defaults: "MarksController:render"
 
 "/personal-info":
-    defaults: "PersonalInfoController:render"
+    defaults: "PrivateController:renderPersonalInfo"
 
 "/files":
-    defaults: "FilesController:render"
+    defaults: "PrivateController:renderFiles"
 
 "/absence":
-    defaults: "AbsenceController:render"
+    defaults: "PrivateController:renderAbsence"
 
 #DB FILLER
 
 "/filler":
-    defaults: "FillerController:render"
+    defaults: "PublicController:fillDb"
 
 
 

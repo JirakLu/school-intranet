@@ -95,7 +95,7 @@ class Router
             }
         }
 
-        return ["controller" => "App\Controllers\ErrorController", "action" => "render404"];
+        return ["controller" => "App\Controllers\PublicController", "action" => "renderError404"];
     }
 
 
@@ -193,6 +193,7 @@ class Router
     private function formatAction(string $action): array
     {
         $splitAction = explode(':', $action);
+        $splitAction = array_map(function($action) {return trim($action);}, $splitAction);
 
         if (count($splitAction) === 2 || count($splitAction) === 3) {
             if (count($splitAction) === 2) { // no params only => Controller:action

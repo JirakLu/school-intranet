@@ -8,10 +8,6 @@ class MarksController extends AController
 {
     public function render(): void
     {
-        if (Session::get("isLoggedIn")) {
-            $this->renderView("pages.private.marks");
-        } else {
-            $this->redirect("restricted");
-        }
+        $this->renderAuth("pages.private.marks", "restricted", Session::get("isLoggedIn"));
     }
 }

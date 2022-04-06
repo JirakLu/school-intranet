@@ -83,4 +83,22 @@ abstract class AController
     }
 
 
+    /**
+     * Renders view depending on auth state.
+     * @param string $view
+     * @param string $redirect
+     * @param bool $auth
+     * @param array <string, mixed> $params
+     * @return void
+     */
+    protected function renderAuth(string $view, string $redirect, bool $auth, array $params = []): void
+    {
+        if ($auth) {
+            $this->renderView($view, $params);
+        } else {
+            $this->redirect($redirect);
+        }
+    }
+
+
 }
