@@ -16,10 +16,39 @@ class UserFacade {
         return $this->userRepo->getUserByEmail($email);
     }
 
-    public function updateUserLastLogin(string $id): bool
+    public function updateUserLastLogin(string $id): void
     {
-//        UPDATE user SET last_login = CURRENT_TIMESTAMP WHERE user_ID = 1;
-        return false;
+        $this->userRepo->updateUserLastLogin($id);
+    }
+
+    public function setAuthCookie(string $id): void
+    {
+        $selector = base64_encode(random_bytes(9));
+        $authenticator = random_bytes(33);
+
+        setcookie(
+            'remember',
+            $selector.':'.base64_encode($authenticator),
+            time() + 864000,
+            "/",
+        );
+
+        $this->userRepo->setUserAuthCookie($id, $selector, hash("sha256", $authenticator));
+    }
+
+    public function checkAuthCookie(string $cookie): UserEntity|null
+    {
+        list($selector, $authenticator) = explode(':', $cookie);
+
+        $user = $this->userRepo->getUserBySelector($selector);
+
+        if (!$user) return null;
+
+        if (hash_equals($user->getAuthCookie(), hash("sha256", base64_decode($authenticator)))) {
+            return $user;
+        }
+
+        return null;
     }
 
 }

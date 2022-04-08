@@ -3,6 +3,7 @@
 namespace App;
 
 use Jenssegers\Blade\Blade;
+use Services\AuthService;
 use Services\Router;
 
 class Kernel {
@@ -63,6 +64,11 @@ class Kernel {
         $this->registerComposers(__DIR__ . "/../resources/views");
 
         Session::start();
+
+        if (!Session::get("isLoggedIn") && isset($_COOKIE["remember"])) {
+            $authService = new AuthService();
+            $authService->checkAuthCookie($_COOKIE["remember"]);
+        }
 
         $router = new Router();
         $action = $router->findRoute();

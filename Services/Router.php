@@ -2,7 +2,6 @@
 
 namespace Services;
 
-
 use App\Controllers\AController;
 use Error;
 use Jenssegers\Blade\Blade;

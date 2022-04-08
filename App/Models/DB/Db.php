@@ -108,7 +108,9 @@ class Db
             throw new Exception("Dotaz {$sql} se neprovede");
 
         $stmt->setFetchMode(PDO::FETCH_NUM);
-        return $stmt->fetch()[0];
+        $result = $stmt->fetch();
+
+        return is_array($result) ? $result[0] : null;
     }
 
     /**

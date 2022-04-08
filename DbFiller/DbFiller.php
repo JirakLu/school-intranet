@@ -21,6 +21,12 @@ class DbFiller
         "PG" => "Programování", "WA" => "Webové aplikace", "OS" => "Operační systémy", "GR" => "Grafika", "MP" => "Mikroprocesorová technika",
         "PX" => "Praxe", "EK" => "Elektronika", "EM" => "Elektrické měření"];
 
+    /** @var string[]  */
+    private array $MARKS = ["1" => "Výborný", "2" => "Chvalitebný", "3" => "Dobrý" , "4" => "Dostatečný", "5" => "Nedostatečný", "U" => "Uvolněn", "N" => "Nehodnocen"];
+
+    /** @var array<array<string>> */
+    private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6ba"], ["Velká písemná práce", 5, "#3c8baf"]];
+
     public function __construct()
     {
         $this->db = Db::getInstance();
@@ -29,25 +35,14 @@ class DbFiller
     public function fill(): void
     {
         $userCount = $this->db->getOne("SELECT COUNT(user_ID) as count FROM user", stdClass::class);
-        $subjectCount = $this->db->getOne("SELECT COUNT(subject_ID) as count FROM subject", stdClass::class);
-        $markTypeCount = $this->db->getOne("SELECT COUNT(mark_type_ID) as count FROM mark_type", stdClass::class);
-        $markCategoryCount = $this->db->getOne("SELECT COUNT(category_ID) as count FROM mark_category", stdClass::class);
 
         if ($userCount->count < 1) {
             $this->fillUsers();
-        }
-
-        if ($subjectCount->count < 1) {
             $this->fillSubjects();
-        }
-
-        if ($markTypeCount->count < 1) {
             $this->fillMarkType();
-        }
-
-        if ($markCategoryCount->count < 1) {
             $this->fillMarkCategory();
         }
+
 
 
     }
@@ -69,14 +64,11 @@ class DbFiller
         fclose($myfile);
 
 
-        $pepper = get_cfg_var("pepper");
-
         foreach ($users as $user) {
-            $psw_peppered = hash_hmac("sha256", $user[3], $pepper);
-            $psw_hashed = password_hash($psw_peppered, PASSWORD_ARGON2ID);
+            $psw_hashed = password_hash($user[3] . get_cfg_var("pepper"), PASSWORD_ARGON2ID);
             $this->db->exec("INSERT INTO user (email, first_name, last_name, password) VALUES (:email, :firstName, :lastName, :password)",
-                [new DbParam("email", $user[0], PDO::PARAM_STR), new DbParam("firstName", $user[1], PDO::PARAM_STR),
-                    new DbParam("lastName", $user[2], PDO::PARAM_STR), new DbParam("password", $psw_hashed, PDO::PARAM_STR)]);
+                [new DbParam("email", $user[0]), new DbParam("firstName", $user[1]), new DbParam("lastName", $user[2]),
+                    new DbParam("password", $psw_hashed, PDO::PARAM_STR)]);
         }
     }
 
@@ -88,8 +80,6 @@ class DbFiller
             $this->db->exec($sql, [new DbParam("name", $name), new DbParam("shortName", $shortName)]);
         }
 
-        shuffle($this->OTHER_LESSONS);
-
         foreach ($this->OTHER_LESSONS as $shortName => $name) {
             $this->db->exec($sql, [new DbParam("name", $name), new DbParam("shortName", $shortName)]);
         }
@@ -98,14 +88,20 @@ class DbFiller
 
     private function fillMarkType(): void
     {
-        $this->db->exec("INSERT INTO mark_type (mark, description) VALUES 
-                 ('1','Výborný'),('2','Chvalitbený'),('3','Dobrý'),('4','Dostatečný'),('5','Nedostatečný'),('U','Uvolněn'),('N','Nehodnocen')");
+        $sql = "INSERT INTO mark_type (mark, description) VALUES (:mark, :desc)";
+
+        foreach ($this->MARKS as $mark => $desc) {
+            $this->db->exec($sql, [new DbParam("mark", $mark), new DbParam("desc", $desc)]);
+        }
     }
 
     private function fillMarkCategory(): void
     {
-        $this->db->exec("INSERT INTO mark_category (label, weight, color) VALUES 
-                 ('Aktivita',1,'#bfb1ff'),('Malá pisémná práce',2,'#45bd7c'),('Zkoušení',3,'#df6bab'),('Velká písmená práce',5,'#3c8baf')");
+        $sql = "INSERT INTO mark_category (label, weight, color) VALUES (:label, :weight, :color)";
+
+        foreach ($this->MARKS_CATEGORY as $markCategory) {
+            $this->db->exec($sql, [new DbParam("label", $markCategory[0]), new DbParam("weight", $markCategory[1], PDO::PARAM_INT), new DbParam("color", $markCategory[2])]);
+        }
     }
 
 }

@@ -10,6 +10,7 @@ class UserEntity {
     private string $firstName;
     private string $lastName;
     private string|null $authCookie;
+    private string|null $cookieSelector;
     private string|null $lastLoginDate;
 
     /**
@@ -106,6 +107,22 @@ class UserEntity {
     public function setAuthCookie(?string $authCookie): void
     {
         $this->authCookie = $authCookie;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCookieSelector(): ?string
+    {
+        return $this->cookieSelector;
+    }
+
+    /**
+     * @param string|null $cookieSelector
+     */
+    public function setCookieSelector(?string $cookieSelector): void
+    {
+        $this->cookieSelector = $cookieSelector;
     }
 
     /**

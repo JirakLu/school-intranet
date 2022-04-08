@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\LoginModel;
 use App\Session;
+use Services\AuthService;
 
 class LoginController extends AController
 {
@@ -14,11 +14,13 @@ class LoginController extends AController
 
     public function handleLogin(): void
     {
-        // TODO: Handle login
-        $model = new LoginModel();
-        $success = $model->handleLogin();
+        $authService = new AuthService();
+        $user = $authService->handleAuth($_POST["email"], $_POST["password"]);
 
-        if ($success) {
+
+        if ($user) {
+            if ($_POST["remember-me"]) $authService->setAuthCookie();
+            cleanError();
             $this->redirect("dashboard");
         } else {
             $this->redirect("login");
@@ -28,6 +30,10 @@ class LoginController extends AController
     public function logout(): void
     {
         Session::destroy();
+        if (isset($_COOKIE['remember'])) {
+            unset($_COOKIE['remember']);
+            setcookie('remember', null, -1, '/');
+        }
         $this->redirect("home");
     }
 }

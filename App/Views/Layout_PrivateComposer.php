@@ -9,10 +9,6 @@ use Illuminate\View\View;
 class Layout_PrivateComposer
 {
 
-    public function __construct() {
-
-    }
-
     /**
      * Bind data to the view.
      *
