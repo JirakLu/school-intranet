@@ -6,12 +6,8 @@ use App\Session;
 use Illuminate\View\View;
 
 
-class NavbarComposer
+class LayoutComposer
 {
-
-    public function __construct() {
-
-    }
 
     /**
      * Bind data to the view.

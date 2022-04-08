@@ -12,6 +12,15 @@ class DbFiller
 
     private Db $db;
 
+    /** @var string[]  */
+    private array $MANDATORY_LESSONS = ["AJ" => "Anglický jazyk", "ČJ" => "Český jazyk a literatura", "EN" => "Ekonomika",
+        "IN" => "Informatika", "MA" => "Matematika", "TV" => "Tělesná výchova", "SV" => "Společenské vědy"];
+
+    /** @var string[]  */
+    private array $OTHER_LESSONS = ["DB" => "Databáze", "HW" => "Hardware", "MU" => "Multimédia", "PS" => "Počítače a sítě",
+        "PG" => "Programování", "WA" => "Webové aplikace", "OS" => "Operační systémy", "GR" => "Grafika", "MP" => "Mikroprocesorová technika",
+        "PX" => "Praxe", "EK" => "Elektronika", "EM" => "Elektrické měření"];
+
     public function __construct()
     {
         $this->db = Db::getInstance();
@@ -73,11 +82,17 @@ class DbFiller
 
     private function fillSubjects(): void
     {
-        $this->db->exec("INSERT INTO subject (name, shortname) VALUES 
-                 ('AJ','Anglický jazyk'),('CJ','Český jazyk a literatura'),('DB','Databáze'),
-                 ('EN','Ekonomika'),('HW','Hardware'),('IN','Informatika'),
-                 ('MA','Matematika'),('MU','Multimédia'),('PS','Počítače a sítě'),('PG','Programování'),
-                 ('TV','Tělesná výchova'),('WA','Webové aplikace'),('SV','Společenské vědy')");
+        $sql = "INSERT INTO subject (name, shortname) VALUES (:name, :shortName)";
+
+        foreach ($this->MANDATORY_LESSONS as $shortName => $name) {
+            $this->db->exec($sql, [new DbParam("name", $name), new DbParam("shortName", $shortName)]);
+        }
+
+        shuffle($this->OTHER_LESSONS);
+
+        foreach ($this->OTHER_LESSONS as $shortName => $name) {
+            $this->db->exec($sql, [new DbParam("name", $name), new DbParam("shortName", $shortName)]);
+        }
 
     }
 

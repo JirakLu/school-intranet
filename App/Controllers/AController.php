@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Views\NavbarComposer;
+use App\Views\LayoutComposer;
 use Error;
 use Illuminate\View\View;
 use Jenssegers\Blade\Blade;
