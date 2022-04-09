@@ -5,6 +5,10 @@ namespace DbFiller;
 use App\Models\DB\Db;
 use App\Models\DB\DbParam;
 use PDO;
+use stdClass;
+
+error_reporting(E_ALL);
+ini_set('display_errors',1);
 
 class DbFiller
 {
@@ -27,7 +31,7 @@ class DbFiller
     private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6ba"], ["Velká písemná práce", 5, "#3c8baf"]];
 
     /** @var string[] */
-    private array $CLASSES = ["1.D", "2.D", "3.D"];
+    private array $CLASSES = ["1.D", "2.D", "3.D", "4.D"];
 
     private string $teachers = "";
 
@@ -40,16 +44,91 @@ class DbFiller
 
     public function fill(): void
     {
-        $userCount = $this->db->getValue("SELECT COUNT(user_ID) as count FROM user");
-
+//        $userCount = $this->db->getValue("SELECT COUNT(user_ID) as count FROM user");
 
         $this->fillClasses();
         $this->fillSubjects();
         $this->fillMarkType();
         $this->fillMarkCategory();
+        $this->fillCourses();
+        $this->fillMarks();
         $this->generateTxt();
+    }
 
+    private function fillMarks(): void
+    {
+        $students = $this->db->getAll("SELECT student_ID FROM student", stdClass::class);
+        $markCategoryID = $this->db->getAll("SELECT category_ID FROM mark_category", stdClass::class);
+        $markCategoryID = array_map(function ($mark) {
+            return $mark->category_ID;
+        }, $markCategoryID);
 
+        foreach($students as $student) {
+            $courses = $this->db->getAll("SELECT course_ID FROM course WHERE group_ID IN (
+                            SELECT group_ID FROM `group` WHERE group_ID IN (
+                            SELECT group_ID from student_in_group WHERE student_ID = :studentID))",
+                stdClass::class, [new DbParam("studentID", $student->student_ID)]);
+
+            foreach ($courses as $course) {
+                $courseID = $course->course_ID;
+                $studentID = $student->student_ID;
+
+                for ($i = 0; $i < rand(1,10); $i++) {
+                    $markTypeID = array_rand(array_flip([1,2,3,4,5,7]));
+                    $markCategoryID = array_rand(array_flip([1,2,3,4]));
+
+                    $this->db->exec("INSERT INTO mark SET date = CURRENT_DATE, course_ID = (SELECT course_ID FROM course WHERE course_ID = :courseID LIMIT 1),
+                                        student_ID = (SELECT student_ID FROM student WHERE student_ID = :studentID LIMIT 1), 
+                                        mark_category_ID = (SELECT category_ID FROM mark_category WHERE category_ID = :markCategoryID LIMIT 1),
+                                        Mark_type_mark_type_ID = (SELECT mark_type_ID FROM mark_type WHERE mark_type_ID = :markTypeID LIMIT 1)",
+                        [new DbParam("courseID", $courseID), new DbParam("studentID", $studentID),
+                            new DbParam("markCategoryID", $markCategoryID), new DbParam("markTypeID", $markTypeID)]);
+                }
+            }
+        }
+    }
+
+    private function fillCourses(): void
+    {
+        $this->getUsers(30, true);
+
+        $classes = $this->db->getAll("SELECT * FROM class", stdClass::class);
+        $teachers = $this->db->getAll("SELECT teacher_ID FROM teacher", stdClass::class);
+        $teachers = array_map(function ($teacher) {
+            return $teacher->teacher_ID;
+        }, $teachers);
+
+        foreach($classes as $class) {
+            $groups = $this->db->getAll("SELECT * FROM `group` WHERE class_ID = :classID", stdClass::class, [new DbParam("classID", $class->class_ID)]);
+
+            foreach ($this->MANDATORY_LESSONS as $lesson) {
+                $this->db->exec("INSERT INTO course SET subject_ID = (SELECT subject_ID FROM subject WHERE name = :lessonName LIMIT 1),
+                    group_ID = (SELECT group_ID FROM `group` WHERE group_ID = :groupID LIMIT 1), 
+                    teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher_ID = :teacherID LIMIT 1)",
+                    [new DbParam("lessonName", $lesson), new DbParam("groupID", $groups[0]->group_ID),
+                    new DbParam("teacherID", array_rand(array_flip($teachers), 1))]);
+            }
+
+            $otherLessons = [];
+            shuffle($this->OTHER_LESSONS);
+            for ($i = 0; $i <= 5; $i++) {
+                $otherLessons[] = $this->OTHER_LESSONS[$i];
+            }
+
+            foreach ($otherLessons as $lesson) {
+                $this->db->exec("INSERT INTO course SET subject_ID = (SELECT subject_ID FROM subject WHERE name = :lessonName LIMIT 1),
+                    group_ID = (SELECT group_ID FROM `group` WHERE group_ID = :groupID LIMIT 1), 
+                    teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher_ID = :teacherID LIMIT 1)",
+                    [new DbParam("lessonName", $lesson), new DbParam("groupID", $groups[1]->group_ID),
+                        new DbParam("teacherID", array_rand(array_flip($teachers), 1))]);
+
+                $this->db->exec("INSERT INTO course SET subject_ID = (SELECT subject_ID FROM subject WHERE name = :lessonName LIMIT 1),
+                    group_ID = (SELECT group_ID FROM `group` WHERE group_ID = :groupID LIMIT 1), 
+                    teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher_ID = :teacherID LIMIT 1)",
+                    [new DbParam("lessonName", $lesson), new DbParam("groupID", $groups[2]->group_ID),
+                        new DbParam("teacherID", array_rand(array_flip($teachers), 1))]);
+            }
+        }
     }
 
     private function fillClasses(): void
