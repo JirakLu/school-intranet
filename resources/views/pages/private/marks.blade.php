@@ -14,8 +14,8 @@
             <div class="py-4">
                 <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                     <div class="shadow-md rounded-lg overflow-hidden w-full flex flex-col gap-2 md:gap-0 divide-gray-500 md:divide-y-[1px]">
-                        @foreach([0,1,2,3,4,5,6,7,8,9,10,11,12,13] as $subject)
-                            @include("components.gradesRow")
+                        @foreach($marks as $subjectName => $markInfo)
+                            @include("components.gradesRow", ["subjectName" => $subjectName, "markInfo" => $markInfo])
                         @endforeach
                     </div>
                 </div>

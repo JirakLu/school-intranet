@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Mark\MarkRepository;
 use DbFiller\DbFiller;
 
 class PublicController extends AController
@@ -31,6 +32,8 @@ class PublicController extends AController
      */
     public function renderSchedule(): void
     {
+        $test = new MarkRepository();
+        $test->getMarksForUser(9);
         $this->renderView("pages.public.schedule");
     }
 
