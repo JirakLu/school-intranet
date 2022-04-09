@@ -27,7 +27,7 @@ class MarkRepository
                 JOIN mark_type ON mark.Mark_type_mark_type_ID = mark_type.mark_type_ID 
                 JOIN mark_category ON mark.mark_category_ID = mark_category.category_ID
                 JOIN course ON mark.course_ID = course.course_ID
-                JOIN subject ON course.course_ID = subject.subject_ID
+                JOIN subject ON course.subject_ID = subject.subject_ID
                 JOIN user ON course.teacher_ID = user.user_ID
                 WHERE mark.student_ID = :studentID
                 GROUP BY mark.course_ID, mark_category.category_ID, mark_type.mark_type_ID, user.user_ID, subject.subject_ID";

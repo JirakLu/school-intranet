@@ -7,8 +7,6 @@ use App\Models\DB\DbParam;
 use PDO;
 use stdClass;
 
-error_reporting(E_ALL);
-ini_set('display_errors',1);
 
 class DbFiller
 {
@@ -31,7 +29,7 @@ class DbFiller
     private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6ba"], ["Velká písemná práce", 5, "#3c8baf"]];
 
     /** @var string[] */
-    private array $CLASSES = ["1.D", "2.D", "3.D", "4.D"];
+    private array $CLASSES = ["1.D", "2.D"];
 
     private string $teachers = "";
 
@@ -64,14 +62,16 @@ class DbFiller
         }, $markCategoryID);
 
         foreach($students as $student) {
-            $courses = $this->db->getAll("SELECT course_ID FROM course WHERE group_ID IN (
-                            SELECT group_ID FROM `group` WHERE group_ID IN (
-                            SELECT group_ID from student_in_group WHERE student_ID = :studentID))",
-                stdClass::class, [new DbParam("studentID", $student->student_ID)]);
+            $studentID = $student->student_ID;
+
+            $courses = $this->db->getAll("SELECT course_ID FROM course
+                                JOIN `group` ON course.group_ID = `group`.group_ID
+                                JOIN student_in_group ON `group`.group_ID = student_in_group.group_ID
+                                WHERE student_in_group.student_ID = :studentID",
+                        stdClass::class, [new DbParam("studentID", 39, PDO::PARAM_INT)]);
 
             foreach ($courses as $course) {
                 $courseID = $course->course_ID;
-                $studentID = $student->student_ID;
 
                 $rand = rand(3,10);
                 for ($i = 0; $i < $rand; $i++) {

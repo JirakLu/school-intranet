@@ -6,13 +6,13 @@
         @foreach($markInfo as $mark)
             <div x-data="{
                     markInfo: {
-                        mark: {{$mark->getMark()}},
-                        weight: {{$mark->getWeight()}},
-                        sub_type: {{$mark->getLatka()}},
-                        teacher: {{$mark->getTeachersName()}},
-                        category: {{$mark->getLabel()}},
-                        desc: {{$mark->getLatka()}},
-                        date: {{$mark->getDate()}}
+                        mark: '{{$mark->getMark()}}',
+                        weight: '{{$mark->getWeight()}}',
+                        sub_type: '{{$mark->getLatka()}}',
+                        teacher: '{{$mark->getTeachersName()}}',
+                        category: '{{$mark->getLabel()}}',
+                        desc: '{{$mark->getLatka()}}',
+                        date: '{{$mark->getDate()}}'
                     }
                 }"
                 @click="markDetailModal = true; markDetailData = markInfo"

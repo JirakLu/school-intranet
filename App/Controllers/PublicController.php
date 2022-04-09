@@ -32,8 +32,6 @@ class PublicController extends AController
      */
     public function renderSchedule(): void
     {
-        $test = new MarkRepository();
-        $test->getMarksForUser(9);
         $this->renderView("pages.public.schedule");
     }
 
@@ -80,7 +78,7 @@ class PublicController extends AController
     public function fillDb(): void
     {
         //TODO: Make DB filling GUI
-        print_r("Filling DB!");
+        print_r("DB is filled!");
         $filler = new DbFiller();
         $filler->fill();
     }
