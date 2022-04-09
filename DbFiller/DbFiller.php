@@ -5,27 +5,33 @@ namespace DbFiller;
 use App\Models\DB\Db;
 use App\Models\DB\DbParam;
 use PDO;
-use stdClass;
 
 class DbFiller
 {
 
     private Db $db;
 
-    /** @var string[]  */
+    /** @var string[] */
     private array $MANDATORY_LESSONS = ["AJ" => "Anglický jazyk", "ČJ" => "Český jazyk a literatura", "EN" => "Ekonomika",
         "IN" => "Informatika", "MA" => "Matematika", "TV" => "Tělesná výchova", "SV" => "Společenské vědy"];
 
-    /** @var string[]  */
+    /** @var string[] */
     private array $OTHER_LESSONS = ["DB" => "Databáze", "HW" => "Hardware", "MU" => "Multimédia", "PS" => "Počítače a sítě",
         "PG" => "Programování", "WA" => "Webové aplikace", "OS" => "Operační systémy", "GR" => "Grafika", "MP" => "Mikroprocesorová technika",
         "PX" => "Praxe", "EK" => "Elektronika", "EM" => "Elektrické měření"];
 
-    /** @var string[]  */
-    private array $MARKS = ["1" => "Výborný", "2" => "Chvalitebný", "3" => "Dobrý" , "4" => "Dostatečný", "5" => "Nedostatečný", "U" => "Uvolněn", "N" => "Nehodnocen"];
+    /** @var string[] */
+    private array $MARKS = ["1" => "Výborný", "2" => "Chvalitebný", "3" => "Dobrý", "4" => "Dostatečný", "5" => "Nedostatečný", "U" => "Uvolněn", "N" => "Nehodnocen"];
 
-    /** @var array<array<string>> */
+    /** @var array<int, array<int, int|string>> */
     private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6ba"], ["Velká písemná práce", 5, "#3c8baf"]];
+
+    /** @var string[] */
+    private array $CLASSES = ["1.D", "2.D", "3.D"];
+
+    private string $teachers = "";
+
+    private string $students = "";
 
     public function __construct()
     {
@@ -34,42 +40,124 @@ class DbFiller
 
     public function fill(): void
     {
-        $userCount = $this->db->getOne("SELECT COUNT(user_ID) as count FROM user", stdClass::class);
+        $userCount = $this->db->getValue("SELECT COUNT(user_ID) as count FROM user");
 
-        if ($userCount->count < 1) {
-            $this->fillUsers();
-            $this->fillSubjects();
-            $this->fillMarkType();
-            $this->fillMarkCategory();
-        }
 
+        $this->fillClasses();
+        $this->fillSubjects();
+        $this->fillMarkType();
+        $this->fillMarkCategory();
+        $this->generateTxt();
 
 
     }
 
-    private function fillUsers(): void
+    private function fillClasses(): void
     {
-        $test = file_get_contents("https://randomuser.me/api/?results=10&password=uppe,lower,18&inc=email,name,login&nat=US");
+        foreach ($this->CLASSES as $class) {
+            $user = $this->getUsers(1, true);
+            $this->db->exec("INSERT INTO class SET class_name = :className, teacher_ID = (SELECT user_ID FROM user WHERE email = :email LIMIT 1)",
+                [new DbParam("className", $class), new DbParam("email", $user[0]["email"])]);
+
+            $classID = $this->db->lastInsertID();
+            $users = $this->getUsers(24, false, $classID);
+
+            // Whole group
+            $this->db->exec("INSERT INTO `group` SET name = :name, class_ID = (SELECT class_ID FROM class WHERE class_ID = :classID LIMIT 1)",
+                [new DbParam("name", $class), new DbParam("classID", $classID)]);
+
+            //S1
+            $this->db->exec("INSERT INTO `group` SET name = 'S1', class_ID = (SELECT class_ID FROM class WHERE class_ID = :classID LIMIT 1)",
+                [new DbParam("classID", $classID)]);
+
+            //S2
+            $this->db->exec("INSERT INTO `group` SET name = 'S2', class_ID = (SELECT class_ID FROM class WHERE class_ID = :classID LIMIT 1)",
+                [new DbParam("classID", $classID)]);
+
+            foreach ($users as $index => $user) {
+                $this->db->exec("INSERT INTO student_in_group SET student_ID = (SELECT user_ID FROM user WHERE email = :email), 
+                                 group_ID = (SELECT group_ID FROM `group` WHERE name = :class && class_ID = :classID LIMIT 1)",
+                    [new DbParam("email", $user["email"]), new DbParam("class", $class), new DbParam("classID", $classID)]);
+
+                if ($index < 12) {
+                    $this->db->exec("INSERT INTO student_in_group SET student_ID = (SELECT user_ID FROM user WHERE email = :email), 
+                                 group_ID = (SELECT group_ID FROM `group` WHERE name = 'S1' && class_ID = :classID LIMIT 1)",
+                        [new DbParam("email", $user["email"]), new DbParam("classID", $classID)]);
+                } else {
+                    $this->db->exec("INSERT INTO student_in_group SET student_ID = (SELECT user_ID FROM user WHERE email = :email), 
+                                 group_ID = (SELECT group_ID FROM `group` WHERE name = 'S2' && class_ID = :classID LIMIT 1)",
+                        [new DbParam("email", $user["email"]), new DbParam("classID", $classID)]);
+                }
+            }
+        }
+    }
+
+    private function getUsers(int $count, bool $isTeacher, string $classId = ""): array
+    {
+        $test = file_get_contents("https://randomuser.me/api/?results=$count&password=upper,lower,18&inc=email,name,login&nat=US");
         $json = json_decode($test, true);
         $users = array_map(function ($user) {
-            return [$user["email"], $user["name"]["first"], $user["name"]["last"], $user["login"]["password"]];
+            $password = password_hash($user["login"]["password"] . get_cfg_var("pepper"), PASSWORD_ARGON2ID);
+            return ["email" => $user["email"], "firstName" => $user["name"]["first"],
+                "lastName" => $user["name"]["last"], "passwordHash" => $password, "password" => $user["login"]["password"]];
         }, $json["results"]);
 
+        $sql = "INSERT INTO user (email, password, first_name, last_name) 
+                VALUES (:email, :password, :firstName, :lastName)";
 
+        $usersV2 = [];
+
+        if (!$isTeacher) {
+            $className = $this->db->getValue("SELECT class_name FROM class WHERE class_ID = :classID", [new DbParam("classID", $classId)]);
+            $this->students .= "\n\n------------------ CLASS - $className  ------------------";
+        }
+
+        foreach ($users as $index => $user) {
+            $this->db->exec($sql, [new DbParam("email", $user["email"]), new DbParam("password", $user["passwordHash"]),
+                new DbParam("firstName", $user["firstName"]), new DbParam("lastName", $user["lastName"])]);
+
+            $userID = $this->db->lastInsertID();;
+
+            if ($index === 0 && !$isTeacher) {
+                $this->students .= "\n---------------- S1 ----------------" ;
+            } else if ($index === 11 && !$isTeacher) {
+                $this->students .= "\n---------------- S2 ----------------" ;
+            }
+
+            if ($isTeacher) {
+                $this->db->exec("INSERT INTO teacher SET teacher_ID = ( SELECT user_ID FROM user WHERE email = :email LIMIT 1)",
+                    [new DbParam("email", $user["email"])]);
+                $this->teachers .= "\n" . $user["email"] . "\t\t" . $user["password"];
+            } else {
+                $this->db->exec("INSERT INTO student SET student_ID = ( SELECT user_ID FROM user WHERE email = :email), 
+                        class_ID = (SELECT class_ID FROM class WHERE class.class_ID = :classID LIMIT 1)", [new DbParam("email", $user["email"]), new DbParam("classID", $classId)]);
+                $this->students .= "\n" . $user["email"] . "\t\t" . $user["password"];
+            }
+
+            $usersV2[] = ["id" => $userID, "email" => $user["email"]];
+        }
+
+        if (!$isTeacher) {
+            $this->students .= "\n---------------------- CLASS - END  ---------------------";
+        }
+
+        return $usersV2;
+    }
+
+    private function generateTxt(): void
+    {
         $myfile = fopen(__DIR__ . "/../DbFiller/users.txt", "w") or die("Unable to open file!");
-        foreach ($users as $user) {
-            $txt = $user[0] . "\t\t\t" . $user[3] . "\n";
-            fwrite($myfile, $txt);
-        }
+
+        fwrite($myfile, "\n\n------------ TEACHERS ------------");
+        fwrite($myfile, $this->teachers);
+        fwrite($myfile, "\n--------------------------------------");
+
+        fwrite($myfile, "\n\n------------ STUDENTS ------------");
+        fwrite($myfile, $this->students);
+        fwrite($myfile, "\n--------------------------------------");
+
+
         fclose($myfile);
-
-
-        foreach ($users as $user) {
-            $psw_hashed = password_hash($user[3] . get_cfg_var("pepper"), PASSWORD_ARGON2ID);
-            $this->db->exec("INSERT INTO user (email, first_name, last_name, password) VALUES (:email, :firstName, :lastName, :password)",
-                [new DbParam("email", $user[0]), new DbParam("firstName", $user[1]), new DbParam("lastName", $user[2]),
-                    new DbParam("password", $psw_hashed, PDO::PARAM_STR)]);
-        }
     }
 
     private function fillSubjects(): void
