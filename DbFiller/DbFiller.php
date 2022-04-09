@@ -199,7 +199,7 @@ class DbFiller
 
             if ($index === 0 && !$isTeacher) {
                 $this->students .= "\n---------------- S1 ----------------" ;
-            } else if ($index === 11 && !$isTeacher) {
+            } else if ($index === 12 && !$isTeacher) {
                 $this->students .= "\n---------------- S2 ----------------" ;
             }
 
