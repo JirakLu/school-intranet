@@ -15,14 +15,19 @@
                         date: '{{$mark->getDate()}}'
                     }
                 }"
-                @click="markDetailModal = true; markDetailData = markInfo"
-                class="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 text-green-800 grid place-items-center cursor-pointer">
+                 @click="markDetailModal = true; markDetailData = markInfo"
+                 class="w-6 h-6 rounded-md text-black grid place-items-center cursor-pointer"
+                 style="background:{{$mark->getColor()}}"
+            >
+
 
                 <p>{{$mark->getMark()}}</p>
             </div>
         @endforeach
     </div>
-    <div class="flex place-items-center bg-gray-200 px-4 py-1 cursor-pointer hover:bg-gray-100">
-        <p class="text-sm md:text-lg font-medium text-gray-800">1</p>
+    <div class="flex place-items-center bg-gray-200 px-4 py-1 flex-row min-w-[80px] max-w-[80px] gap-1">
+        <p class="text-sm md:text-lg font-medium text-gray-800 ">{{round(calculateAverage($markInfo))}}</p>
+        <span> - </span>
+        <p class="text-base text-gray-500">{{calculateAverage($markInfo)}}</p>
     </div>
 </div>

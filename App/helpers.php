@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Models\Mark\MarkEntity;
 use App\Session;
 
 if (!function_exists("mix")) {
@@ -32,6 +33,24 @@ if (!function_exists("cleanError")) {
     {
         Session::set("showError", false);
         Session::set("error", "");
+    }
+}
+
+if (!function_exists("calculateAverage")) {
+
+    /** @var MarkEntity[] $marks */
+    function calculateAverage(array $marks): float
+    {
+        $weightSum = 0;
+        $markXWeightSum = 0;
+
+        foreach ($marks as $mark) {
+            $weightSum += $mark->getWeight();
+            $markXWeightSum += $mark->getWeight() * $mark->getMark();
+        }
+
+        return round($markXWeightSum/$weightSum, 2);
+
     }
 }
 
