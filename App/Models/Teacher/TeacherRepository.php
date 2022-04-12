@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Mark;
+namespace App\Models\Teacher;
 
 use App\Models\DB\Db;
 
-class MarkRepository {
+class TeacherRepository {
 
     private Db $db;
 

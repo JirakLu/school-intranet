@@ -2,8 +2,7 @@
 
 namespace App\Models\Mark;
 
-class MarkFacade
-{
+class MarkFacade {
 
     private MarkRepository $markRepo;
 
@@ -12,9 +11,4 @@ class MarkFacade
         $this->markRepo = new MarkRepository();
     }
 
-    /** @return array<string, array<int, MarkEntity>>|null */
-    public function getMarksForUser(string $id): array|null
-    {
-        return $this->markRepo->getMarksForUser($id);
-    }
 }

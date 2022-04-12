@@ -26,7 +26,7 @@ class DbFiller
     private array $MARKS = ["1" => "Výborný", "2" => "Chvalitebný", "3" => "Dobrý", "4" => "Dostatečný", "5" => "Nedostatečný", "U" => "Uvolněn", "N" => "Nehodnocen"];
 
     /** @var array<int, array<int, int|string>> */
-    private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6ba"], ["Velká písemná práce", 5, "#3c8baf"]];
+    private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6baa"], ["Velká písemná práce", 5, "#3c8baf"]];
 
     /** @var string[] */
     private array $CLASSES = ["1.D", "2.D"];
@@ -42,8 +42,6 @@ class DbFiller
 
     public function fill(): void
     {
-//        $userCount = $this->db->getValue("SELECT COUNT(user_ID) as count FROM user");
-
         $this->fillClasses();
         $this->fillSubjects();
         $this->fillMarkType();
@@ -78,7 +76,7 @@ class DbFiller
                     $markTypeID = array_rand(array_flip([1,2,3,4,5]));
                     $markCategoryID = array_rand(array_flip([1,2,3,4]));
 
-                    $this->db->exec("INSERT INTO mark SET date = CURRENT_DATE, latka = 'Super látka, kterou nechci generovat. 🙃', 
+                    $this->db->exec("INSERT INTO mark SET date = CURRENT_DATE, latka = 'Multimateriál', description = '1+(3+1+3+3uv-½uv)+(1+6+2+4uv)+(1+6+2+4uv) = 36,5 ~ 96 %', 
                                         course_ID = (SELECT course_ID FROM course WHERE course_ID = :courseID LIMIT 1),
                                         student_ID = (SELECT student_ID FROM student WHERE student_ID = :studentID LIMIT 1), 
                                         mark_category_ID = (SELECT category_ID FROM mark_category WHERE category_ID = :markCategoryID LIMIT 1),

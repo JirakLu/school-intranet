@@ -16,7 +16,10 @@
                     }
                 }"
                 @click="markDetailModal = true; markDetailData = markInfo"
-                class="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 text-green-800 grid place-items-center cursor-pointer">
+                class="w-6 h-6 rounded-md text-black grid place-items-center cursor-pointer"
+                style="background:{{$mark->getColor()}}"
+                >
+
 
                 <p>{{$mark->getMark()}}</p>
             </div>

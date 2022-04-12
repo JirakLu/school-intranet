@@ -142,6 +142,7 @@ class UserEntity {
     }
 
 
+    // My getters and setters
 
     public function getWholeName(): string
     {
