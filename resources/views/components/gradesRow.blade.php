@@ -11,7 +11,7 @@
                         sub_type: '{{$mark->getLatka()}}',
                         teacher: '{{$mark->getTeachersName()}}',
                         category: '{{$mark->getLabel()}}',
-                        desc: '{{$mark->getLatka()}}',
+                        desc: '{{$mark->getDescription()}}',
                         date: '{{$mark->getDate()}}'
                     }
                 }"

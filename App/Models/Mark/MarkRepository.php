@@ -21,10 +21,10 @@ class MarkRepository
      */
     public function getMarksForUser(string $id): array|null
     {
-        $sql = "SELECT mark_category.label, mark_category.weight, mark_category.color, mark_type.mark, mark_type.description,
+        $sql = "SELECT mark_category.label, mark_category.weight, mark_category.color, mark_type.mark, mark.description,
                 user.first_name as firstName, user.last_name as lastName, subject.name as subjectName, mark.latka, mark.date 
                 FROM mark
-                JOIN mark_type ON mark.Mark_type_mark_type_ID = mark_type.mark_type_ID 
+                JOIN mark_type ON mark.mark_type_ID = mark_type.mark_type_ID 
                 JOIN mark_category ON mark.mark_category_ID = mark_category.category_ID
                 JOIN course ON mark.course_ID = course.course_ID
                 JOIN subject ON course.subject_ID = subject.subject_ID
