@@ -58,6 +58,7 @@ class AuthService {
         Session::set("email", $user->getEmail());
         Session::set("lastName", $user->getFirstName());
         Session::set("firstName", $user->getLastName());
+        Session::set("isTeacher", $this->userFacade->checkIfTeacher($user->getUserID()));
         $this->userFacade->updateUserLastLogin($user->getUserID());
         cleanError();
     }

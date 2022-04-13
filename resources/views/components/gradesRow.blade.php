@@ -2,7 +2,7 @@
     <div class="flex place-items-center bg-indigo-100 px-2 py-1 w-full max-w-[180px]">
         <p class="text-sm md:text-base font-medium text-indigo-800">{{$subjectName}}</p>
     </div>
-    <div class="flex flex-row gap-2 flex-wrap w-full px-4 py-2 items-center bg-gray-50">
+    <div class="flex flex-row gap-2 flex-wrap w-full px-4 py-2 items-center bg-gray-100">
         @foreach($markInfo as $mark)
             <div x-data="{
                     markInfo: {

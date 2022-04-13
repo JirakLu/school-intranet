@@ -37,6 +37,8 @@
 
 "/marks":
     defaults: "MarksController:render"
+"/marks/<param>":
+    defaults: "MarksController:teacherAccess:$param"
 
 "/personal-info":
     defaults: "PrivateController:renderPersonalInfo"

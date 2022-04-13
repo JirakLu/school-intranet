@@ -16,6 +16,11 @@ class UserFacade {
         return $this->userRepo->getUserByEmail($email);
     }
 
+    public function getTeachingByID(string $id): array
+    {
+        return $this->userRepo->getTeachingByID($id);
+    }
+
     public function updateUserLastLogin(string $id): void
     {
         $this->userRepo->updateUserLastLogin($id);
@@ -49,6 +54,11 @@ class UserFacade {
         }
 
         return null;
+    }
+
+    public function checkIfTeacher(string $id): bool
+    {
+        return $this->userRepo->checkIfTeacher($id);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Session;
 use App\Views\LayoutComposer;
 use Error;
 use Illuminate\View\View;
@@ -97,6 +98,13 @@ abstract class AController
             $this->renderView($view, $params);
         } else {
             $this->redirect($redirect);
+        }
+    }
+
+    protected function privateRoute(): void
+    {
+        if (!Session::get("isLoggedIn")) {
+            $this->redirect("restricted");
         }
     }
 

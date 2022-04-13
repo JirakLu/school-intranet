@@ -30,7 +30,8 @@ class MarkRepository
                 JOIN subject ON course.subject_ID = subject.subject_ID
                 JOIN user ON course.teacher_ID = user.user_ID
                 WHERE mark.student_ID = :studentID
-                GROUP BY mark.course_ID, mark_category.category_ID, mark_type.mark_type_ID, user.user_ID, subject.subject_ID";
+                GROUP BY mark.course_ID ,mark.date, mark_category.category_ID, mark_type.mark_type_ID, user.user_ID, subject.subject_ID
+                ORDER BY mark.date";
 
         $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("studentID", $id)]);
 

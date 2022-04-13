@@ -48,6 +48,7 @@ class DbFiller
         $this->fillMarkCategory();
         $this->fillCourses();
         $this->fillMarks();
+        $this->generateGarant();
         $this->generateTxt();
     }
 
@@ -76,11 +77,11 @@ class DbFiller
                     $markTypeID = array_rand(array_flip([1,2,3,4,5]));
                     $markCategoryID = array_rand(array_flip([1,2,3,4]));
 
-                    $this->db->exec("INSERT INTO mark SET date = CURRENT_DATE, latka = 'Multimateriál', description = '1+(3+1+3+3uv-½uv)+(1+6+2+4uv)+(1+6+2+4uv) = 36,5 ~ 96 %', 
+                    $this->db->exec("INSERT INTO mark SET date = date_add('2022-03-01', INTERVAL RAND()*30 DAY), latka = 'Multimateriál', description = '1+(3+1+3+3uv-½uv)+(1+6+2+4uv)+(1+6+2+4uv) = 36,5 ~ 96 %', 
                                         course_ID = (SELECT course_ID FROM course WHERE course_ID = :courseID LIMIT 1),
                                         student_ID = (SELECT student_ID FROM student WHERE student_ID = :studentID LIMIT 1), 
                                         mark_category_ID = (SELECT category_ID FROM mark_category WHERE category_ID = :markCategoryID LIMIT 1),
-                                        Mark_type_mark_type_ID = (SELECT mark_type_ID FROM mark_type WHERE mark_type_ID = :markTypeID LIMIT 1)",
+                                        mark_type_ID = (SELECT mark_type_ID FROM mark_type WHERE mark_type_ID = :markTypeID LIMIT 1)",
                         [new DbParam("courseID", $courseID), new DbParam("studentID", $studentID),
                             new DbParam("markCategoryID", $markCategoryID), new DbParam("markTypeID", $markTypeID)]);
                 }
@@ -88,9 +89,29 @@ class DbFiller
         }
     }
 
+    private function generateGarant(): void
+    {
+        $teachers = $this->db->getAll("SELECT teacher_ID FROM teacher", stdClass::class);
+        $teachers = array_map(function ($teacher) {
+            return $teacher->teacher_ID;
+        }, $teachers);
+
+        $sql = "UPDATE subject SET teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher.teacher_ID = :id) WHERE subject.shortname = :subjectName";
+
+        foreach ($this->MANDATORY_LESSONS as $shortName => $name) {
+            $this->db->exec($sql, [new DbParam("subjectName", $shortName), new DbParam("id", array_rand(array_flip($teachers)))]);
+        }
+
+        foreach ($this->OTHER_LESSONS as $shortName => $name) {
+            $this->db->exec($sql, [new DbParam("subjectName", $shortName), new DbParam("id", array_rand(array_flip($teachers)))]);
+        }
+
+
+    }
+
     private function fillCourses(): void
     {
-        $this->getUsers(30, true);
+        $this->getUsers(10, true);
 
         $classes = $this->db->getAll("SELECT * FROM class", stdClass::class);
         $teachers = $this->db->getAll("SELECT teacher_ID FROM teacher", stdClass::class);

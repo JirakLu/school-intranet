@@ -13,6 +13,7 @@ class PrivateController extends AController
      */
     public function renderPersonalInfo(): void
     {
+        $this->privateRoute();
         $this->renderAuth("pages.private.personal-info", "restricted", Session::get("isLoggedIn"));
     }
 
@@ -22,6 +23,7 @@ class PrivateController extends AController
      */
     public function renderFiles(): void
     {
+        $this->privateRoute();
         $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"));
     }
 
@@ -31,6 +33,7 @@ class PrivateController extends AController
      */
     public function renderAbsence(): void
     {
+        $this->privateRoute();
         $this->renderAuth("pages.private.absence", "restricted", Session::get("isLoggedIn"));
     }
 
