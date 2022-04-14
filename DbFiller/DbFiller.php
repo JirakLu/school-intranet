@@ -67,7 +67,7 @@ class DbFiller
                                 JOIN `group` ON course.group_ID = `group`.group_ID
                                 JOIN student_in_group ON `group`.group_ID = student_in_group.group_ID
                                 WHERE student_in_group.student_ID = :studentID",
-                stdClass::class, [new DbParam("studentID", 39, PDO::PARAM_INT)]);
+                stdClass::class, [new DbParam("studentID", $studentID, PDO::PARAM_INT)]);
 
             foreach ($courses as $course) {
                 $courseID = $course->course_ID;
@@ -96,14 +96,14 @@ class DbFiller
             return $teacher->teacher_ID;
         }, $teachers);
 
-        $sql = "UPDATE subject SET teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher.teacher_ID = :id) WHERE subject.shortname = :subjectName";
+        $sql = "UPDATE subject SET teacher_ID = (SELECT teacher_ID FROM teacher WHERE teacher.teacher_ID = :id) WHERE subject.name = :subjectName";
 
-        foreach ($this->MANDATORY_LESSONS as $shortName => $name) {
-            $this->db->exec($sql, [new DbParam("subjectName", $shortName), new DbParam("id", array_rand(array_flip($teachers)))]);
+        foreach ($this->MANDATORY_LESSONS as $name) {
+            $this->db->exec($sql, [new DbParam("subjectName", $name), new DbParam("id", array_rand(array_flip($teachers)))]);
         }
 
-        foreach ($this->OTHER_LESSONS as $shortName => $name) {
-            $this->db->exec($sql, [new DbParam("subjectName", $shortName), new DbParam("id", array_rand(array_flip($teachers)))]);
+        foreach ($this->OTHER_LESSONS as $name) {
+            $this->db->exec($sql, [new DbParam("subjectName", $name), new DbParam("id", array_rand(array_flip($teachers)))]);
         }
 
 

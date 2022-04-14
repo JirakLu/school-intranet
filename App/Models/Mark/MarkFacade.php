@@ -17,4 +17,10 @@ class MarkFacade
     {
         return $this->markRepo->getMarksForUser($id);
     }
+
+    /** @return array<string, array<int, MarkEntity>>|null */
+    public function getMarksBySlug(string $slug)
+    {
+        return $this->markRepo->getMarksBySlug($slug);
+    }
 }

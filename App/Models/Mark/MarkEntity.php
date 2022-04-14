@@ -15,6 +15,8 @@ class MarkEntity
     private string $subjectName;
     private string $latka;
     private string $date;
+    private string|null $student_firstName;
+    private string|null $student_lastName;
 
     /**
      * @return string
@@ -174,6 +176,43 @@ class MarkEntity
     public function setDate(string $date): void
     {
         $this->date = $date;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStudentFirstName(): ?string
+    {
+        return $this->student_firstName;
+    }
+
+    /**
+     * @param string|null $student_firstName
+     */
+    public function setStudentFirstName(?string $student_firstName): void
+    {
+        $this->student_firstName = $student_firstName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStudentLastName(): ?string
+    {
+        return $this->student_lastName;
+    }
+
+    /**
+     * @param string|null $student_lastName
+     */
+    public function setStudentLastName(?string $student_lastName): void
+    {
+        $this->student_lastName = $student_lastName;
+    }
+
+    public function getStudentsName(): string
+    {
+        return $this->student_firstName . " " . $this->student_lastName;
     }
 
     public function getTeachersName(): string

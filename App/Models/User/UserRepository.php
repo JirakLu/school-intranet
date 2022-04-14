@@ -25,11 +25,17 @@ class UserRepository {
 
     public function getTeachingByID(string $id): array
     {
-        $classTeacher = $this->db->getAll("SELECT class_name, class_ID FROM class WHERE teacher_ID = :id", stdClass::class, [new DbParam("id", $id)]);
+        $classTeacher = $this->db->getAll("SELECT class.class_name, class.class_ID, subject.subject_ID, subject.name
+                                                FROM class 
+                                                JOIN `group` ON class.class_ID = `group`.class_ID
+                                                JOIN course ON `group`.group_ID = course.group_ID
+                                                JOIN subject ON course.subject_ID = subject.subject_ID
+                                                WHERE class.teacher_ID = :id
+                                                GROUP BY class.class_ID, subject.subject_ID", stdClass::class, [new DbParam("id", $id)]);
 
         if ($classTeacher) {
             $classTeacher = array_map(function($class) {
-                return ["title" => $class->class_name, "id" => $class->class_ID];
+                return ["title" => $class->class_name . " - " . $class->name, "id" => $class->class_ID . "-" . $class->subject_ID];
             }, $classTeacher);
         }
         $courseTeacher = $this->db->getAll("SELECT course.course_ID, class.class_name, class.class_ID, `group`.name as group_name, `group`.group_ID, subject.name, subject.subject_ID
