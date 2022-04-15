@@ -54,7 +54,7 @@
                 <input type="text" name="backURL" id="backURL" x-bind:value="window.location.href" class="hidden">
                 <div>
                     <label for="markCategory" class="block text-sm font-medium text-gray-700">Kategorie: </label>
-                    <select id="markCategory" name="markCategory"
+                    <select id="markCategory" name="markCategory" required
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         @foreach($categories as $category)
                             <option class="hover:bg-indigo-600 hover:text-white"
@@ -65,7 +65,7 @@
                 </div>
                 <div>
                     <label for="markType" class="block text-sm font-medium text-gray-700">Známka: </label>
-                    <select id="markType" name="markType"
+                    <select id="markType" name="markType" required
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         @foreach($markTypes as $type)
                             <option class="hover:bg-indigo-600 hover:text-white"
@@ -76,20 +76,20 @@
                 <div>
                     <label for="latka" class="block text-sm font-medium text-gray-700">Látka: </label>
                     <div class="mt-1">
-                        <textarea rows="1" name="latka" id="latka"
+                        <textarea rows="1" name="latka" id="latka" required
                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
                     </div>
                 </div>
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700">Poznámka: </label>
                     <div class="mt-1">
-                        <textarea rows="4" name="description" id="description"
+                        <textarea rows="4" name="description" id="description" required
                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
                     </div>
                 </div>
                 <div>
                     <label for="date" class="block text-sm font-medium text-gray-700">Známka: </label>
-                    <input type="date" name="date" id="date"
+                    <input type="date" name="date" id="date" required
                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
 
                 </div>
