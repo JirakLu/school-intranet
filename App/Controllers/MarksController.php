@@ -29,11 +29,13 @@ class MarksController extends AController
 
     public function teacherAccess(string $slug): void
     {
-        //TODO Check if access
+        $markFacade = new MarkFacade();
+        if (!$markFacade->checkAccess(Session::get("user_ID"), $slug)) $this->redirect("restricted");
+
         $userFacade = new UserFacade();
         $teachings = $userFacade->getTeachingByID(Session::get("user_ID"));
 
-        $markFacade = new MarkFacade();
+
         $marks = $markFacade->getMarksBySlug($slug);
         
         $selected = "";
@@ -50,7 +52,14 @@ class MarksController extends AController
         $info = array_pop($selected);
         $formSelected["title"] = $info["title"];
 
-        $this->renderAuth("pages.private.marksTeacher", "restricted", Session::get("isLoggedIn"), 
-            ["form" => $teachings, "selected" => $formSelected, "marks" => $marks]);
+        if ($formSelected["type"] === "courseTeacher") {
+            $this->renderAuth("pages.private.marksTeacherEdit", "restricted", Session::get("isLoggedIn"),
+                ["form" => $teachings, "selected" => $formSelected, "marks" => $marks]);
+        } else {
+            $this->renderAuth("pages.private.marksTeacher", "restricted", Session::get("isLoggedIn"),
+                ["form" => $teachings, "selected" => $formSelected, "marks" => $marks]);
+        }
+
+
     }
 }

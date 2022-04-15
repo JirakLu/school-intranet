@@ -1,5 +1,5 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
-<div x-show="markDetailModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+<div x-show="markDetailModal" class="fixed z-10 inset-0 overflow-y-auto overscroll-contain" aria-labelledby="modal-title" role="dialog"
      aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <!--
@@ -57,9 +57,15 @@
                         <p x-text="markDetailData.weight" class="text-lg font-bold"></p>
                     </div>
                 </div>
-                <div class="flex flex-col gap-1 py-5 px-5">
-                    <h3 class="text-gray-600 font-semibold text-sm">Látka</h3>
-                    <p x-text="markDetailData.sub_type" class="text-sm font-normal"></p>
+                <div class="flex flex-col md:flex-row gap-3 mt-3 justify-between">
+                    <div class="flex flex-col gap-1 py-5 px-5">
+                        <h3 class="text-gray-600 font-semibold text-sm">Látka</h3>
+                        <p x-text="markDetailData.sub_type" class="text-sm font-normal"></p>
+                    </div>
+                    <div class="flex flex-col gap-1 py-5 px-5">
+                        <h3 class="text-gray-600 font-semibold text-sm">Předmět</h3>
+                        <p x-text="markDetailData.subjectName" class="text-sm font-normal"></p>
+                    </div>
                 </div>
                 <div class="flex flex-col gap-1 py-5 px-5">
                     <h3 class="text-gray-600 font-semibold text-sm">Učitel</h3>

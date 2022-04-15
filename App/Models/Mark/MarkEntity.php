@@ -9,12 +9,15 @@ class MarkEntity
     private int $weight;
     private string $color;
     private string $mark;
+    private string $markID;
     private string $description;
     private string $firstName;
     private string $lastName;
     private string $subjectName;
     private string $latka;
     private string $date;
+    private string|null $studentID;
+    private string $categoryID;
     private string|null $student_firstName;
     private string|null $student_lastName;
 
@@ -80,6 +83,22 @@ class MarkEntity
     public function setMark(string $mark): void
     {
         $this->mark = $mark;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarkID(): string
+    {
+        return $this->markID;
+    }
+
+    /**
+     * @param string $markID
+     */
+    public function setMarkID(string $markID): void
+    {
+        $this->markID = $markID;
     }
 
     /**
@@ -176,6 +195,38 @@ class MarkEntity
     public function setDate(string $date): void
     {
         $this->date = $date;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStudentID(): ?string
+    {
+        return $this->studentID;
+    }
+
+    /**
+     * @param string|null $studentID
+     */
+    public function setStudentID(?string $studentID): void
+    {
+        $this->studentID = $studentID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategoryID(): string
+    {
+        return $this->categoryID;
+    }
+
+    /**
+     * @param string $categoryID
+     */
+    public function setCategoryID(string $categoryID): void
+    {
+        $this->categoryID = $categoryID;
     }
 
     /**

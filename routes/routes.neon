@@ -49,6 +49,17 @@
 "/absence":
     defaults: "PrivateController:renderAbsence"
 
+#API
+
+"/api/marks/edit":
+    defaults: "ApiController:edit"
+
+"/api/marks/del":
+    defaults: "ApiController:delete"
+
+"/api/marks/add":
+    defaults: "ApiController:add"
+
 #DB FILLER
 
 "/filler":

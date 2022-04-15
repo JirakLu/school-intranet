@@ -75,7 +75,7 @@ class DbFiller
                 $rand = rand(3,10);
                 for ($i = 0; $i < $rand; $i++) {
                     $markTypeID = array_rand(array_flip([1,2,3,4,5]));
-                    $markCategoryID = array_rand(array_flip([1,2,3,4]));
+                    $markCatID = array_rand(array_flip($markCategoryID));
 
                     $this->db->exec("INSERT INTO mark SET date = date_add('2022-03-01', INTERVAL RAND()*30 DAY), latka = 'Multimateriál', description = '1+(3+1+3+3uv-½uv)+(1+6+2+4uv)+(1+6+2+4uv) = 36,5 ~ 96 %', 
                                         course_ID = (SELECT course_ID FROM course WHERE course_ID = :courseID LIMIT 1),
@@ -83,7 +83,7 @@ class DbFiller
                                         mark_category_ID = (SELECT category_ID FROM mark_category WHERE category_ID = :markCategoryID LIMIT 1),
                                         mark_type_ID = (SELECT mark_type_ID FROM mark_type WHERE mark_type_ID = :markTypeID LIMIT 1)",
                         [new DbParam("courseID", $courseID), new DbParam("studentID", $studentID),
-                            new DbParam("markCategoryID", $markCategoryID), new DbParam("markTypeID", $markTypeID)]);
+                            new DbParam("markCategoryID", $markCatID), new DbParam("markTypeID", $markTypeID)]);
                 }
             }
         }

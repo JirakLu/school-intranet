@@ -48,7 +48,7 @@
                             <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{$className["id"]}}-classTeacher'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate"> {{$className["title"]}} </span>
+                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $className["title"] ? "font-bold" : ""}}"> {{$className["title"]}} </span>
                             </li>
                         @endforeach
                     </ul>
@@ -104,7 +104,7 @@
                             <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{ $courseName["id"] }}-courseTeacher'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate"> {{ $courseName["title"] }} </span>
+                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $courseName["title"] ? "font-bold" : ""}}"> {{ $courseName["title"] }} </span>
                             </li>
                         @endforeach
                     </ul>
@@ -160,7 +160,7 @@
                             <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{ $subjectName["id"] }}-garant'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate"> {{ $subjectName["title"] }} </span>
+                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $subjectName["title"] ? "font-bold" : ""}}"> {{ $subjectName["title"] }} </span>
                             </li>
                         @endforeach
                     </ul>

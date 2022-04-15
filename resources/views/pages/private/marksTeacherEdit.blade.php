@@ -3,6 +3,8 @@
 @section("content")
     <div x-data="{
             markDetailModal: false,
+            markAddModal: false,
+            markAddModalID: '',
             markDetailData: {}
         }"
          class="py-6">
@@ -17,15 +19,16 @@
                     <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                         <div class="shadow-md rounded-lg overflow-hidden w-full flex flex-col gap-2 md:gap-0 divide-gray-500 md:divide-y-[1px]">
                             @foreach($marks as $subjectName => $markInfo)
-                                @include("components.gradesRow", ["subjectName" => $subjectName, "markInfo" => $markInfo, "addMark" => false])
+                                @include("components.gradesRow", ["subjectName" => $subjectName, "markInfo" => $markInfo, "addMark" => true])
                             @endforeach
                         </div>
                     </div>
                 </div>
-            @endif
-            <!-- /End replace -->
+        @endif
+        <!-- /End replace -->
         </div>
 
-        @include("components.markDetailModal")
+        @include("components.markEditModal")
+        @include("components.markAddModal")
     </div>
 @endsection

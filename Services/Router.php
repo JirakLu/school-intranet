@@ -121,6 +121,19 @@ class Router
     }
 
     /**
+     * Redirects user to specified URL
+     * @param string $endPoint
+     * @param int $statusCode
+     * @return void
+     */
+    public function redirectURL(string $endPoint, int $statusCode = 303): void
+    {
+        header("Location: $endPoint", true, $statusCode);
+        header("Connection: close");
+        exit();
+    }
+
+    /**
      * redirects user to chosen controller without changing url
      * @param class-string<AController> $controller
      * @param string $action

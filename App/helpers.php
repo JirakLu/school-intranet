@@ -39,17 +39,20 @@ if (!function_exists("cleanError")) {
 if (!function_exists("calculateAverage")) {
 
     /** @var MarkEntity[] $marks */
-    function calculateAverage(array $marks): float
+    function calculateAverage(array $marks, int $round): float|string
     {
         $weightSum = 0;
         $markXWeightSum = 0;
 
         foreach ($marks as $mark) {
-            $weightSum += $mark->getWeight();
-            $markXWeightSum += $mark->getWeight() * $mark->getMark();
+            if ($mark->getMark() !== "N" && $mark->getMark() !== "U") {
+                $weightSum += $mark->getWeight();
+                $markXWeightSum += $mark->getWeight() * $mark->getMark();
+            }
         }
 
-        return round($markXWeightSum/$weightSum, 2);
+        if ($weightSum === 0) return "";
+        return round($markXWeightSum/$weightSum, $round);
 
     }
 }

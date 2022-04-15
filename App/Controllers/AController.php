@@ -25,7 +25,7 @@ abstract class AController
     }
 
     /**
-     * Redirects to a different url.
+     * Redirects to a different endpoint on my web.
      * @param string $endpoint
      * @param int|null $statusCode
      * @return void
@@ -34,6 +34,17 @@ abstract class AController
     {
         $endpoint = $endpoint[0] === "/" ? substr($endpoint, 1) : $endpoint;
         $this->router->redirect($endpoint, $statusCode);
+    }
+
+    /**
+     * Redirects to a different url.
+     * @param string $endpoint
+     * @param int|null $statusCode
+     * @return void
+     */
+    protected function redirectURL(string $endpoint, ?int $statusCode = 303): void
+    {
+        $this->router->redirectURL($endpoint, $statusCode);
     }
 
     /**
