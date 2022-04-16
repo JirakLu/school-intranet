@@ -50,7 +50,8 @@
             </h3>
 
             <form method="POST" action="{{$createLink("api/marks/add")}}" class="space-y-2">
-                <input type="text" name="userID" id="userID" x-bind:value="markAddModalID" class="hidden">
+                <input type="text" name="studentID" id="studentID" x-bind:value="markAddData.studentID" class="hidden">
+                <input type="text" name="courseID" id="courseID" x-bind:value="markAddData.courseID" class="hidden">
                 <input type="text" name="backURL" id="backURL" x-bind:value="window.location.href" class="hidden">
                 <div>
                     <label for="markCategory" class="block text-sm font-medium text-gray-700">Kategorie: </label>
@@ -88,8 +89,8 @@
                     </div>
                 </div>
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700">Známka: </label>
-                    <input type="date" name="date" id="date" required
+                    <label for="date" class="block text-sm font-medium text-gray-700">Datum: </label>
+                    <input type="date" name="date" id="date" required x-bind:max="new Date().toISOString().split('T')[0]"
                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
 
                 </div>

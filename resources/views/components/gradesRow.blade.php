@@ -7,7 +7,7 @@
             <div x-data="{
                     markInfo: {
                         mark: '{{$mark->getMtMark()}}',
-                        markWeight: '{{$mark->getMtWeight()}}',
+                        markWeight: '{{$mark->getMcWeight()}}',
                         latka: '{{$mark->getLatka()}}',
                         subjectName: '{{$mark->getSubjectName()}}',
                         teacher: '{{$mark->getTeachersName()}}',
@@ -18,7 +18,7 @@
                 }"
                  @click="markDetailModal = true; markDetailData = markInfo"
                  class="w-6 h-6 rounded-md text-black grid place-items-center cursor-pointer"
-                 style="background:{{$mark->getColor()}}"
+                 style="background:{{$mark->getMcColor()}}"
             >
                 <p>{{$mark->getMtMark()}}</p>
             </div>

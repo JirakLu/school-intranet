@@ -12,28 +12,27 @@ class ApiController extends AController
     //TODO: Check inputs everywhere
 
     /*
-    [markID] => 92
-    [backURL] => http://localhost/school-intranet/marks/1-1-courseTeacher
-    [markCategory] => 1
-    [markType] => 3
-    [latka] => Multimateriál
-    [description] => 1+(3+1+3+3uv-½uv)+(1+6+2+4uv)+(1+6+2+4uv) = 36,5 ~ 96 %
-    [date] => 2022-03-07
+    [markID] => 2052
+    [backURL] => http://localhost/school-intranet/marks/33-courseTeacher
+    [markCategory] => 4
+    [markType] => 5
+    [latka] => Test
+    [description] => Poznámka
+    [date] => 2022-03-08
      */
     public function edit(): void
     {
         $this->privateRoute();
 
-
         $markFacade = new MarkFacade();
-        $markFacade->editMark($_POST["date"], $_POST["latka"], $_POST["description"], $_POST["markID"], $_POST["markCategory"], $_POST["markType"]);
+        $markFacade->editMark($_POST["markID"], $_POST["date"], $_POST["latka"], $_POST["description"], $_POST["markCategory"], $_POST["markType"]);
 
         $this->redirectURL($_POST["backURL"]);
     }
 
     /*
-    [markID] => 94
-    [backURL] => http://localhost/school-intranet/marks/1-1-courseTeacher
+    [markID] => 2128
+    [backURL] => http://localhost/school-intranet/marks/33-courseTeacher
      */
     public function delete(): void
     {
@@ -46,28 +45,21 @@ class ApiController extends AController
     }
 
     /*
-    [userID] => 3
-    [backURL] => http://localhost/school-intranet/marks/1-1-courseTeacher
-    [markCategory] => 1
-    [markType] => 1
-    [latka] =>
-    [description] =>
-    [date] =>
+    [studentID] => 27
+    [courseID] => 33
+    [backURL] => http://localhost/school-intranet/marks/33-courseTeacher
+    [markCategory] => 4
+    [markType] => 5
+    [latka] => Testovací látka
+    [description] => Supr poznámka od Černocha.
+    [date] => 2022-04-15
      */
     public function add(): void
     {
         $this->privateRoute();
 
-        $courseInfo = explode("/", $_POST["backURL"]);
-        $courseInfo = array_pop($courseInfo);
-        $courseInfo = explode("-", $courseInfo);
-        array_pop($courseInfo);
-        $subjectID = array_pop($courseInfo);
-
-        $info = ["classID" => $courseInfo[0], "subjectID" => $subjectID, "teacherID" => Session::get("user_ID")];
-
         $markFacade = new MarkFacade();
-        $markFacade->addMark($_POST["date"], $_POST["latka"], $_POST["description"], $info, $_POST["userID"], $_POST["markCategory"], $_POST["markType"]);
+        $markFacade->addMark($_POST["date"], $_POST["latka"], $_POST["description"], $_POST["courseID"], $_POST["studentID"], $_POST["markCategory"], $_POST["markType"]);
 
         $this->redirectURL($_POST["backURL"]);
     }

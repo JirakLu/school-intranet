@@ -39,14 +39,14 @@ class MarkFacade
         return $this->markRepo->getMarkTypes();
     }
 
-    public function addMark(string $date, string $latka, string $description, array $info, string $studentID, string $markCategory, string $markType): void
+    public function addMark(string $date, string $latka, string $description, string $courseID, string $studentID, string $markCategoryID, string $markTypeID): void
     {
-        $this->markRepo->addMark($date, $latka, $description, $info, $studentID, $markCategory, $markType);
+        $this->markRepo->addMark($date, $latka, $description, $courseID, $studentID, $markCategoryID, $markTypeID);
     }
 
-    public function editMark(string $date, string $latka, string $description, string $markID, string $markCategory, string $markType): void
+    public function editMark(string $markID, string $date, string $latka, string $description, string $markCategoryID, string $markTypeID): void
     {
-        $this->markRepo->editMark($date, $latka, $description, $markID, $markCategory, $markType);
+        $this->markRepo->editMark($markID, $date, $latka, $description, $markCategoryID, $markTypeID);
     }
 
     public function removeMark(string $markID): void

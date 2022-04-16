@@ -57,8 +57,8 @@
                     <select id="markCategory" name="markCategory" required
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         @foreach($categories as $category)
-                            <option x-bind:selected="markDetailData.categoryID === '{{$category->category_ID}}'"
-                                    x-bind:class="markDetailData.categoryID === '{{$category->category_ID}}' ? 'font-bold' : ''"
+                            <option x-bind:selected="markDetailData.markCategoryID === '{{$category->category_ID}}'"
+                                    x-bind:class="markDetailData.markCategoryID === '{{$category->category_ID}}' ? 'font-bold' : ''"
                                     class="hover:bg-indigo-600 hover:text-white"
                                     value="{{$category->category_ID}}">{{$category->label}} -
                                 Váha: {{$category->weight}}</option>
@@ -70,8 +70,8 @@
                     <select id="markType" name="markType" required
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         @foreach($markTypes as $type)
-                            <option x-bind:selected="markDetailData.mark === '{{$type->mark}}'"
-                                    x-bind:class="markDetailData.mark === '{{$type->mark}}' ? 'font-bold' : ''"
+                            <option x-bind:selected="markDetailData.markTypeID === '{{$type->mark}}'"
+                                    x-bind:class="markDetailData.markTypeID === '{{$type->mark}}' ? 'font-bold' : ''"
                                     class="hover:bg-indigo-600 hover:text-white"
                                     value="{{$type->mark_type_ID}}">{{$type->mark}} - {{$type->description}}</option>
                         @endforeach
@@ -80,20 +80,20 @@
                 <div>
                     <label for="latka" class="block text-sm font-medium text-gray-700">Látka: </label>
                     <div class="mt-1">
-                        <textarea rows="1" name="latka" id="latka" x-text="markDetailData.sub_type" required
+                        <textarea rows="1" name="latka" id="latka" x-text="markDetailData.latka" required
                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
                     </div>
                 </div>
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700">Poznámka: </label>
                     <div class="mt-1">
-                        <textarea rows="4" name="description" id="description" x-text="markDetailData.desc" required
+                        <textarea rows="4" name="description" id="description" x-text="markDetailData.markDesc" required
                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
                     </div>
                 </div>
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700">Známka: </label>
-                    <input type="date" name="date" id="date" x-bind:value="markDetailData.date" required
+                    <label for="date" class="block text-sm font-medium text-gray-700">Datum: </label>
+                    <input type="date" name="date" id="date" x-bind:value="markDetailData.date" required x-bind:max="new Date().toISOString().split('T')[0]"
                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
 
                 </div>
