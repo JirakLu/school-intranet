@@ -44,6 +44,11 @@ class MarkFacade
         $this->markRepo->addMark($date, $latka, $description, $courseID, $studentID, $markCategoryID, $markTypeID);
     }
 
+    public function addMarkToAll(string $date, string $latka, string $description, string $courseID, string $markCategoryID, string $markTypeID): void
+    {
+        $this->markRepo->addMarkToAll($date, $latka, $description, $courseID, $markCategoryID, $markTypeID);
+    }
+
     public function editMark(string $markID, string $date, string $latka, string $description, string $markCategoryID, string $markTypeID): void
     {
         $this->markRepo->editMark($markID, $date, $latka, $description, $markCategoryID, $markTypeID);
@@ -52,5 +57,20 @@ class MarkFacade
     public function removeMark(string $markID): void
     {
         $this->markRepo->removeMark($markID);
+    }
+
+    public function checkAccessMarkID(string $userID, string $markID): bool
+    {
+        return $this->markRepo->checkAccessMarkID($userID, $markID);
+    }
+
+    public function checkAccessCourseID(string $userID, string $courseID): bool
+    {
+        return $this->markRepo->checkAccessCourseID($userID, $courseID);
+    }
+
+    public function addCategory(string $userID, int $weight, string $color, string $label): void
+    {
+        $this->markRepo->addCategory($userID, $weight, $color, $label);
     }
 }

@@ -46,7 +46,7 @@
              @click.outside="markDetailModal = false"
              class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle w-[350px] sm:max-w-md sm:p-6">
             <h3 class="text-2xl font-normal mb-5">
-                Známka
+                Upravit známku
             </h3>
 
             <form id="markEdit" method="POST" action="{{$createLink("api/marks/edit")}}" class="space-y-2">

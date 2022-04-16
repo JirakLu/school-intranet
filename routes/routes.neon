@@ -60,6 +60,12 @@
 "/api/marks/add":
     defaults: "ApiController:add"
 
+"/api/marks/addToAll":
+    defaults: "ApiController:addToAll"
+
+"/api/category/addCategory":
+    defaults: "ApiController:addCategory"
+
 #DB FILLER
 
 "/filler":

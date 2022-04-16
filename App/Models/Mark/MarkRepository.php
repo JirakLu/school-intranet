@@ -182,6 +182,23 @@ class MarkRepository
 
     }
 
+    public function addMarkToAll(string $date, string $latka, string $description, string $courseID, string $markCategoryID, string $markTypeID): void
+    {
+        $sql = "SELECT sig.student_ID FROM course 
+                JOIN `group` g on g.group_ID = course.group_ID
+                JOIN student_in_group sig on g.group_ID = sig.group_ID
+                WHERE course_ID = :courseID";
+
+        $students = $this->db->getAll($sql, stdClass::class, [new DbParam("courseID", $courseID)]);
+
+        foreach ($students as $student) {
+            $this->db->exec("INSERT INTO mark SET date = :date, latka = :latka, description = :desc,
+                            course_ID = :courseID, student_ID = :studentID, mark_category_ID = :markCategory, mark_type_ID = :markType",
+                [new DbParam("date", $date), new DbParam("latka", $latka), new DbParam("desc", $description), new DbParam("courseID", $courseID)
+                    , new DbParam("studentID", $student->student_ID), new DbParam("markCategory", $markCategoryID), new DbParam("markType", $markTypeID)]);
+        }
+    }
+
     public function editMark(string $markID, string $date, string $latka, string $description, string $markCategoryID, string $markTypeID): void
     {
         $this->db->exec("UPDATE mark SET date = :date, latka = :latka, description = :desc, mark_category_ID = :markCategory, mark_type_ID = :markType
@@ -193,5 +210,30 @@ class MarkRepository
     public function removeMark(string $markID): void
     {
         $this->db->exec("DELETE FROM mark WHERE mark_ID = :markID", [new DbParam("markID", $markID)]);
+    }
+
+    public function checkAccessMarkID(string $userID, string $markID): bool
+    {
+        $sql = "SELECT count(*) FROM mark
+                JOIN course c on c.course_ID = mark.course_ID
+                WHERE c.teacher_ID = :teacherID AND mark.mark_ID = :markID";
+
+        return $this->db->getValue($sql, [new DbParam("teacherID", $userID), new DbParam("markID", $markID)]);
+    }
+
+    public function checkAccessCourseID(string $userID, string $courseID): bool
+    {
+        $sql = "SELECT count(*) FROM mark
+                JOIN course c on c.course_ID = mark.course_ID
+                WHERE c.teacher_ID = :teacherID AND mark.course_ID = :courseID";
+
+        return $this->db->getValue($sql, [new DbParam("teacherID", $userID), new DbParam("courseID", $courseID)]);
+    }
+
+    public function addCategory(string $userID, int $weight, string $color, string $label): void
+    {
+        $sql = "INSERT INTO mark_category SET label = :label, weight = :weight, color = :color, teacher_ID = :teacherID";
+
+        $this->db->exec($sql, [new DbParam("label", $label), new DbParam("weight", $weight), new DbParam("color", $color), new DbParam("teacherID", $userID)]);
     }
 }

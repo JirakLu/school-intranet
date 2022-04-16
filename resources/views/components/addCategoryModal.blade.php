@@ -1,5 +1,5 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
-<div x-show="markAddModal" class="fixed z-10 inset-0 overflow-y-auto overscroll-contain"
+<div x-show="addCategoryModal" class="fixed z-10 inset-0 overflow-y-auto overscroll-contain"
      aria-labelledby="modal-title"
      role="dialog"
      aria-modal="true">
@@ -14,7 +14,7 @@
             From: "opacity-100"
             To: "opacity-0"
         -->
-        <div x-show="markAddModal"
+        <div x-show="addCategoryModal"
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
@@ -36,65 +36,40 @@
             From: "opacity-100 translate-y-0 sm:scale-100"
             To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         -->
-        <div x-show="markAddModal"
+        <div x-show="addCategoryModal"
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave="ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             @click.outside="markAddModal = false"
+             @click.outside="addCategoryModal = false"
              class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle w-[350px] sm:max-w-md sm:p-6">
             <h3 class="text-2xl font-normal mb-5">
-                Přidat známku
+                Přidat kategorii
             </h3>
 
-            <form method="POST" action="{{$createLink("api/marks/add")}}" class="space-y-2">
-                <input type="text" name="studentID" id="studentID" x-bind:value="markAddData.studentID" class="hidden">
-                <input type="text" name="courseID" id="courseID" x-bind:value="markAddData.courseID" class="hidden">
+            <form method="POST" action="{{$createLink("api/category/addCategory")}}" class="space-y-2">
                 <input type="text" name="backURL" id="backURL" x-bind:value="window.location.href" class="hidden">
                 <div>
-                    <label for="markCategory" class="block text-sm font-medium text-gray-700">Kategorie: </label>
-                    <select id="markCategory" name="markCategory" required
-                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                        @foreach($categories as $category)
-                            <option class="hover:bg-indigo-600 hover:text-white"
-                                    value="{{$category->category_ID}}">{{$category->label}} -
-                                Váha: {{$category->weight}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="markType" class="block text-sm font-medium text-gray-700">Známka: </label>
-                    <select id="markType" name="markType" required
-                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                        @foreach($markTypes as $type)
-                            <option class="hover:bg-indigo-600 hover:text-white"
-                                    value="{{$type->mark_type_ID}}">{{$type->mark}} - {{$type->description}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="latka" class="block text-sm font-medium text-gray-700">Látka: </label>
+                    <label for="weight" class="block text-sm font-medium text-gray-700">Váha: </label>
                     <div class="mt-1">
-                        <textarea rows="1" name="latka" id="latka" required
-                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                        <input type="number" min="0" max="10" name="weight" id="weight" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
                     </div>
                 </div>
                 <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700">Poznámka: </label>
+                    <label for="color" class="block text-sm font-medium text-gray-700">Barvička: </label>
                     <div class="mt-1">
-                        <textarea rows="4" name="description" id="description" required
-                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                        <input type="color" name="color" id="color" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-12 px-2 sm:text-sm border-gray-300 rounded-md">
                     </div>
                 </div>
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700">Datum: </label>
-                    <input type="date" name="date" id="date" required x-bind:max="new Date().toISOString().split('T')[0]" x-bind:value="new Date().toISOString().split('T')[0]"
-                           class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-
+                    <label for="label" class="block text-sm font-medium text-gray-700">Látka: </label>
+                    <div class="mt-1">
+                        <textarea rows="1" name="label" id="label" required
+                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                    </div>
                 </div>
-
                 <button type="submit"
                         class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm cursor-pointer text-base font-medium rounded-md bg-green-100 hover:bg-green-200 text-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 border border-green-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-3 h-5 w-5 text-green-500" fill="none"
