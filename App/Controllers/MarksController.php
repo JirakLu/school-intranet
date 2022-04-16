@@ -17,10 +17,10 @@ class MarksController extends AController
             $userFacade = new UserFacade();
             $teachings = $userFacade->getTeachingByID(Session::get("user_ID"));
 
-            $this->renderAuth("pages.private.marksTeacher", "restricted", Session::get("isLoggedIn"), ["form" => $teachings]);
+            $this->renderAuth("pages.private.marksTeacher", "restricted", Session::get("isLoggedIn"), ["teachings" => $teachings]);
         } else {
             $markFacade = new MarkFacade();
-            $marks = $markFacade->getMarksForUser(Session::get("user_ID"));
+            $marks = $markFacade->getMarksForStudent(Session::get("user_ID"));
 
             $this->renderAuth("pages.private.marks", "restricted", Session::get("isLoggedIn"), ["marks" => $marks]);
         }
@@ -34,30 +34,35 @@ class MarksController extends AController
 
         $userFacade = new UserFacade();
         $teachings = $userFacade->getTeachingByID(Session::get("user_ID"));
-
-
         $marks = $markFacade->getMarksBySlug($slug);
-        
-        $selected = "";
 
-        foreach($teachings as $type => $info) {
-            $selected = array_filter($info, function ($obj) use ($slug, $type) {
-                return $obj["id"] . "-" . $type === $slug ;
-            });
-            if (!empty($selected)) break;
+        $slug = explode("-",$slug);
+        $type = array_pop($slug);
+        $courseID = array_shift($slug);
+
+        $selectedTitle = "";
+        foreach ($teachings as $teaching) {
+            foreach ($teaching as $teach) {
+                if ($teach["id"] === $courseID . "-" . $type) {
+                    $selectedTitle = $teach["title"];
+                    break;
+                }
+            }
+            if (!empty($selectedTitle)) break;
         }
-        $formSelected["id"] = $slug;
-        $megalumen = explode("-",$slug);
-        $formSelected["type"] = array_pop($megalumen);
-        $info = array_pop($selected);
-        $formSelected["title"] = $info["title"];
+        
+        $selected = [
+            "id" => $courseID . "-" . $type,
+            "type" => $type,
+            "title" => $selectedTitle
+        ];
 
-        if ($formSelected["type"] === "courseTeacher") {
+        if ($selected["type"] === "courseTeacher") {
             $this->renderAuth("pages.private.marksTeacherEdit", "restricted", Session::get("isLoggedIn"),
-                ["form" => $teachings, "selected" => $formSelected, "marks" => $marks]);
+                ["teachings" => $teachings, "selected" => $selected, "marks" => $marks]);
         } else {
             $this->renderAuth("pages.private.marksTeacher", "restricted", Session::get("isLoggedIn"),
-                ["form" => $teachings, "selected" => $formSelected, "marks" => $marks]);
+                ["teachings" => $teachings, "selected" => $selected, "marks" => $marks]);
         }
 
 

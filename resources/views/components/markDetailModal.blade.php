@@ -54,13 +54,13 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <h3 class="text-gray-600 font-semibold text-sm">Váha</h3>
-                        <p x-text="markDetailData.weight" class="text-lg font-bold"></p>
+                        <p x-text="markDetailData.markWeight" class="text-lg font-bold"></p>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-3 mt-3 justify-between">
                     <div class="flex flex-col gap-1 py-5 px-5">
                         <h3 class="text-gray-600 font-semibold text-sm">Látka</h3>
-                        <p x-text="markDetailData.sub_type" class="text-sm font-normal"></p>
+                        <p x-text="markDetailData.latka" class="text-sm font-normal"></p>
                     </div>
                     <div class="flex flex-col gap-1 py-5 px-5">
                         <h3 class="text-gray-600 font-semibold text-sm">Předmět</h3>
@@ -73,11 +73,11 @@
                 </div>
                 <div class="flex flex-col gap-1 py-5 px-5">
                     <h3 class="text-gray-600 font-semibold text-sm">Kategorie</h3>
-                    <p x-text="markDetailData.category" class="text-sm font-normal"></p>
+                    <p x-text="markDetailData.markCategory" class="text-sm font-normal"></p>
                 </div>
                 <div class="flex flex-col gap-1 py-5 px-5">
                     <h3 class="text-gray-600 font-semibold text-sm">Poznámka</h3>
-                    <p x-text="markDetailData.desc ? markDetailData.desc : 'Nejsou žádné poznámky'" class="text-sm font-normal"></p>
+                    <p x-text="markDetailData.markDesc ? markDetailData.markDesc : 'Nejsou žádné poznámky'" class="text-sm font-normal"></p>
                 </div>
                 <div class="flex flex-row justify-between items-center">
                     <h3 x-text="markDetailData.date" class="text-gray-800 font-thin text-sm py-5"></h3>

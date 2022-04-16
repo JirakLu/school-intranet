@@ -16,36 +16,47 @@ class MarkRepository
         $this->db = Db::getInstance();
     }
 
-    /**
-     * @param string $id
-     * @return array<string, array<int, MarkEntity>>|null
-     */
-    public function getMarksForUser(string $id): array|null
+
+    public function getMarksForStudent(string $studentID): array|null
     {
-        $sql = "SELECT mark_category.label, mark_category.weight, mark.mark_ID as markID, mark_category.color, mark.mark_category_ID as categoryID, mark_type.mark, mark.description,
-                user.first_name as firstName, user.last_name as lastName, subject.name as subjectName, mark.latka, mark.date
+        $sql = "SELECT mark.mark_ID markID, mark.date, mark.latka, mark.description markDesc, mark.course_ID courseID, mark.student_ID studentID, mark.mark_category_ID markCategoryID, mark.mark_type_ID markTypeID,
+                mc.label mcLabel, mc.weight mcWeight, mc.color mcColor,
+                mt.mark mtMark, mt.description mtDesc,
+                s.subject_ID subjectID, s.name subjectName,
+                ucak.first_name teacherName, ucak.last_name teacherSurname,
+                studak.first_name studentName, studak.last_name studentSurname
                 FROM mark
-                JOIN mark_type ON mark.mark_type_ID = mark_type.mark_type_ID 
-                JOIN mark_category ON mark.mark_category_ID = mark_category.category_ID
-                JOIN course ON mark.course_ID = course.course_ID
-                JOIN subject ON course.subject_ID = subject.subject_ID
-                JOIN user ON course.teacher_ID = user.user_ID
-                WHERE mark.student_ID = :studentID
-                GROUP BY mark.course_ID ,mark.date, mark_category.category_ID, mark_type.mark_type_ID, user.user_ID, subject.subject_ID
-                ORDER BY mark.date";
+                JOIN mark_category mc on mark.mark_category_ID = mc.category_ID
+                JOIN mark_type mt on mark.mark_type_ID = mt.mark_type_ID
+                JOIN course c on c.course_ID = mark.course_ID
+                JOIN subject s on c.subject_ID = s.subject_ID
+                LEFT JOIN user studak ON student_ID = studak.user_ID
+                LEFT JOIN user ucak ON c.teacher_ID = ucak.user_ID
+                WHERE student_ID = :studentID
+                ORDER BY date";
 
-        $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("studentID", $id)]);
+        /** @var  $marks MarkEntity[] */
+        $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("studentID", $studentID)]);
 
-        $subjects = array_map(function ($mark) {
-            return $mark->getSubjectName();
-        }, $marks);
-        $subjects = array_unique($subjects);
+        $subjects = $this->db->getAll("SELECT subject.subject_ID, subject.name
+                                            FROM subject
+                                            JOIN course c on subject.subject_ID = c.subject_ID
+                                            JOIN `group` g on c.group_ID = g.group_ID
+                                            JOIN student_in_group sig on g.group_ID = sig.group_ID
+                                            WHERE sig.student_ID = :studentID", stdClass::class, [new DbParam("studentID", $studentID)]);
 
         $formattedMarks = [];
         foreach ($subjects as $subject) {
-            $formattedMarks[$subject] = array_filter($marks, function ($mark) use ($subject) {
-                return $subject === $mark->getSubjectName();
+            $markss = array_filter($marks, function ($mark) use ($subject) {
+                return $mark->getSubjectID() == $subject->subject_ID;
             });
+            $formattedMarks[$subject->subject_ID] = [
+                "subjectID" => $subject->subject_ID,
+                "subjectName" => $subject->name,
+                "average" => calculateAverage($markss, 2),
+                "averageRounded" => calculateAverage($markss, 0),
+                "marks" => $markss,
+            ];
         }
 
         return $formattedMarks;
@@ -54,15 +65,9 @@ class MarkRepository
     public function getMarksBySlug(string $slug)
     {
         $parsedSlug = explode("-", $slug);
-        $type = array_pop($parsedSlug);
+        $courseID = array_shift($parsedSlug);
 
-        $marks = "";
-
-        if ($type === "classTeacher" || $type === "garant") {
-            $classID = $parsedSlug[0];
-            $subjectID = $parsedSlug[1];
-
-            $sql = "SELECT mark_category.label, mark_category.weight, mark.mark_ID as markID, mark_category.color, mark.mark_category_ID as categoryID, mark_type.mark, mark.description, ucak.first_name as firstName, ucak.last_name as lastName, subject.name as subjectName, mark.latka, mark.date,
+        $sql = "SELECT mark_category.label, mark_category.weight, mark.mark_ID as markID, mark_category.color, mark.mark_category_ID as categoryID, mark_type.mark, mark.description, ucak.first_name as firstName, ucak.last_name as lastName, subject.name as subjectName, mark.latka, mark.date,
                     studak.first_name as student_firstName, studak.last_name as student_lastName, studak.user_ID as studentID
                     FROM mark
                     JOIN mark_type ON mark.mark_type_ID = mark_type.mark_type_ID 
@@ -73,114 +78,67 @@ class MarkRepository
                     JOIN student ON mark.student_ID = student.student_ID
                     LEFT JOIN user AS ucak ON course.teacher_ID = ucak.user_ID
                     LEFT JOIN user AS studak ON mark.student_ID = studak.user_ID
-                    WHERE course.subject_ID = :subID AND student.class_ID = :classID 
-                    GROUP BY mark.course_ID ,mark.date, mark_category.category_ID, mark_type.mark_type_ID,subject.subject_ID, studak.user_ID, ucak.user_ID
-                    ORDER BY mark.date";
-            $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("subID", $subjectID), new DbParam("classID", $classID)]);
-
-        } elseif ($type === "courseTeacher") {
-            if (count($parsedSlug) === 2) {
-                $classID = $parsedSlug[0];
-                $subjectID = $parsedSlug[1];
-
-                $sql = "SELECT mark_category.label, mark_category.weight, mark.mark_ID as markID, mark_category.color, mark.mark_category_ID as categoryID, mark_type.mark, mark.description, ucak.first_name as firstName, ucak.last_name as lastName, subject.name as subjectName, mark.latka, mark.date,
-                    studak.first_name as student_firstName, studak.last_name as student_lastName, studak.user_ID as studentID
-                    FROM mark
-                    JOIN mark_type ON mark.mark_type_ID = mark_type.mark_type_ID 
-                    JOIN mark_category ON mark.mark_category_ID = mark_category.category_ID
-                    JOIN course ON mark.course_ID = course.course_ID
-                    JOIN subject ON course.subject_ID = subject.subject_ID
-                    JOIN `group` ON course.group_ID = `group`.group_ID
-                    JOIN student ON mark.student_ID = student.student_ID
-                    LEFT JOIN user AS ucak ON course.teacher_ID = ucak.user_ID
-                    LEFT JOIN user AS studak ON mark.student_ID = studak.user_ID
-                    WHERE course.subject_ID = :subjectID AND student.class_ID = :classID
+                    WHERE course.course_ID = :courseID
                     GROUP BY mark.course_ID ,mark.date, mark_category.category_ID, mark_type.mark_type_ID,subject.subject_ID, studak.user_ID, ucak.user_ID
                     ORDER BY mark.date";
 
-                $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("subjectID", $subjectID), new DbParam("classID", $classID)]);
+        /** @var  $marks MarkEntity[] */
+        $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("courseID", $courseID)]);
 
-            } elseif (count($parsedSlug) === 3) {
-                $classID = $parsedSlug[0];
-                $groupID = $parsedSlug[1];
-                $subjectID = $parsedSlug[2];
-
-                $sql = "SELECT mark_category.label, mark_category.weight, mark.mark_ID as markID, mark.mark_category_ID as categoryID, mark_category.color, mark_type.mark, mark.description, ucak.first_name as firstName, ucak.last_name as lastName, subject.name as subjectName, mark.latka, mark.date,
-                    studak.first_name as student_firstName, studak.last_name as student_lastName, studak.user_ID as studentID
-                    FROM mark
-                    JOIN mark_type ON mark.mark_type_ID = mark_type.mark_type_ID 
-                    JOIN mark_category ON mark.mark_category_ID = mark_category.category_ID
-                    JOIN course ON mark.course_ID = course.course_ID
-                    JOIN subject ON course.subject_ID = subject.subject_ID
-                    JOIN `group` ON course.group_ID = `group`.group_ID
-                    JOIN student ON mark.student_ID = student.student_ID
-                    LEFT JOIN user AS ucak ON course.teacher_ID = ucak.user_ID
-                    LEFT JOIN user AS studak ON mark.student_ID = studak.user_ID
-                    WHERE course.subject_ID = :subjectID AND student.class_ID = :classID AND `group`.group_ID = :groupID
-                    GROUP BY mark.course_ID ,mark.date, mark_category.category_ID, mark_type.mark_type_ID,subject.subject_ID, studak.user_ID, ucak.user_ID
-                    ORDER BY mark.date";
-
-                $marks = $this->db->getAll($sql, MarkEntity::class, [new DbParam("subjectID", $subjectID), new DbParam("classID", $classID), new DbParam("groupID", $groupID)]);
-            }
-
-        }
-
-        $students = array_map(function ($mark) {
-            return $mark->getStudentsName() . "-" . $mark->getStudentID();
-        }, $marks);
-        $students = array_unique($students);
+        $students = $this->db->getAll("SELECT user.user_ID userID, user.first_name firstName, user.last_name lastName 
+                                            FROM user
+                                            JOIN student_in_group sg ON user.user_ID = sg.student_ID
+                                            JOIN `group` g on sg.group_ID = g.group_ID
+                                            JOIN course c on g.group_ID = c.group_ID
+                                            WHERE c.course_ID = :courseID", stdClass::class, [new DbParam("courseID", $courseID)]);
 
         $formattedMarks = [];
         foreach ($students as $student) {
-            $studentID = explode("-", $student);
-            $studentID = array_pop($studentID);
-            $formattedMarks[$student] = array_filter($marks, function ($mark) use ($studentID) {
-                return $studentID === $mark->getStudentID();
+            $markss = array_filter($marks, function ($mark) use ($student) {
+                return $mark->getStudentID() == $student->userID;
             });
+            $formattedMarks[$student->userID] = [
+                "studentID" => $student->userID,
+                "studentName" => $student->firstName . " " . $student->lastName,
+                "courseID" => $courseID,
+                "marks" => $markss
+            ];
         }
-        ksort($formattedMarks);
+
         return $formattedMarks;
     }
 
     public function checkAccess(string $userID, string $slug): bool
     {
         $parsedSlug = explode("-", $slug);
+
         $type = array_pop($parsedSlug);
+        $courseID = array_shift($parsedSlug);
 
         if ($type === "classTeacher") {
-            $sql = "SELECT count(*) FROM class WHERE teacher_ID = :teacherID";
-            return $this->db->getValue($sql, [new DbParam("teacherID", $userID)]);
-        } else if ($type === "courseTeacher") {
-            if (count($parsedSlug) === 2) {
-                $classID = $parsedSlug[0];
-                $subjectID = $parsedSlug[1];
+            $sql = "SELECT count(*) FROM course
+                    JOIN `group` g on course.group_ID = g.group_ID
+                    JOIN class c on g.class_ID = c.class_ID
+                    WHERE c.teacher_ID = :userID AND course_ID = :courseID";
 
-                $sql = "SELECT count(*) FROM course 
-                        JOIN `group` ON course.group_ID = `group`.group_ID
-                        JOIN class  on `group`.class_ID = class.class_ID
-                        WHERE course.teacher_ID = :teacherID AND class.class_ID = :classID AND subject_ID = :subjectID";
-
-                return $this->db->getValue($sql, [new DbParam("teacherID", $userID), new DbParam("classID", $classID), new DbParam("subjectID", $subjectID)]);
-
-
-            } elseif (count($parsedSlug) === 3) {
-                $classID = $parsedSlug[0];
-                $groupID = $parsedSlug[1];
-                $subjectID = $parsedSlug[2];
-
-                $sql = "SELECT count(*) FROM course 
-                        JOIN `group` ON course.group_ID = `group`.group_ID
-                        JOIN class  on `group`.class_ID = class.class_ID
-                        WHERE course.teacher_ID = :teacherID AND class.class_ID = :classID AND subject_ID = :subjectID AND `group`.group_ID = :groupID";
-
-                return $this->db->getValue($sql, [new DbParam("teacherID", $userID), new DbParam("classID", $classID), new DbParam("subjectID", $subjectID), new DbParam("groupID", $groupID)]);
-            }
-        } elseif ($type === "garant") {
-            $subjectID = $parsedSlug[1];
-
-            $sql = "SELECT count(*) FROM subject WHERE subject_ID = :subjectID AND teacher_ID = :teacherID";
-            return $this->db->getValue($sql, [new DbParam("teacherID", $userID), new DbParam("subjectID", $subjectID)]);
+            return $this->db->getValue($sql, [new DbParam("userID", $userID), new DbParam("courseID", $courseID)]);
         }
+
+        if ($type === "courseTeacher") {
+            $sql = "SELECT count(*) FROM course
+                    WHERE teacher_ID = :userID AND course_ID = :courseID";
+
+            return $this->db->getValue($sql, [new DbParam("userID", $userID), new DbParam("courseID", $courseID)]);
+        }
+
+        if ($type === "garant") {
+            $sql = "SELECT count(*) FROM course
+                    JOIN subject s on course.subject_ID = s.subject_ID
+                    WHERE s.teacher_ID = :userID AND course.course_ID = :courseID";
+
+            return $this->db->getValue($sql, [new DbParam("userID", $userID), new DbParam("courseID", $courseID)]);
+        }
+
         return false;
     }
 

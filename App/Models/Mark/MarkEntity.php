@@ -5,85 +5,51 @@ namespace App\Models\Mark;
 class MarkEntity
 {
 
-    private string $label;
-    private int $weight;
-    private string $color;
-    private string $mark;
+    /* MARK */
     private string $markID;
-    private string $description;
-    private string $firstName;
-    private string $lastName;
-    private string $subjectName;
-    private string $latka;
     private string $date;
-    private string|null $studentID;
-    private string $categoryID;
-    private string|null $student_firstName;
-    private string|null $student_lastName;
+    private string $latka;
+    private string $markDesc;
+    private string $courseID;
+    private string $markCategoryID;
+    private string $markTypeID;
 
-    /**
-     * @return string
-     */
-    public function getLabel(): string
+    /* Mark Category */
+    private string $mcLabel;
+    private int $mcWeight;
+    private string $mcColor;
+
+    /* Mark Type */
+    private string $mtMark;
+    private string $mtDesc;
+
+    /* Subject */
+    private string $subjectID;
+    private string $subjectName;
+
+    /* Teacher */
+    private string $teacherID;
+    private string $teacherName;
+    private string $teacherSurname;
+
+    /* Student */
+    private string $studentID;
+    private string $studentName;
+    private string $studentSurname;
+
+    /* Custom methods */
+
+    public function getTeachersName(): string
     {
-        return $this->label;
+        return $this->teacherName . " " . $this->teacherSurname;
     }
 
-    /**
-     * @param string $label
-     */
-    public function setLabel(string $label): void
+    public function getStudentsName(): string
     {
-        $this->label = $label;
+        return $this->studentName . " " . $this->studentSurname;
     }
 
-    /**
-     * @return int
-     */
-    public function getWeight(): int
-    {
-        return $this->weight;
-    }
-
-    /**
-     * @param int $weight
-     */
-    public function setWeight(int $weight): void
-    {
-        $this->weight = $weight;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColor(): string
-    {
-        return $this->color;
-    }
-
-    /**
-     * @param string $color
-     */
-    public function setColor(string $color): void
-    {
-        $this->color = $color;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMark(): string
-    {
-        return $this->mark;
-    }
-
-    /**
-     * @param string $mark
-     */
-    public function setMark(string $mark): void
-    {
-        $this->mark = $mark;
-    }
+    /* Generated methods */
 
     /**
      * @return string
@@ -104,65 +70,17 @@ class MarkEntity
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDate(): string
     {
-        return $this->description;
+        return $this->date;
     }
 
     /**
-     * @param string $description
+     * @param string $date
      */
-    public function setDescription(string $description): void
+    public function setDate(string $date): void
     {
-        $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param string $firstName
-     */
-    public function setFirstName(string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param string $lastName
-     */
-    public function setLastName(string $lastName): void
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSubjectName(): string
-    {
-        return $this->subjectName;
-    }
-
-    /**
-     * @param string $subjectName
-     */
-    public function setSubjectName(string $subjectName): void
-    {
-        $this->subjectName = $subjectName;
+        $this->date = $date;
     }
 
     /**
@@ -184,31 +102,239 @@ class MarkEntity
     /**
      * @return string
      */
-    public function getDate(): string
+    public function getMarkDesc(): string
     {
-        return $this->date;
+        return $this->markDesc;
     }
 
     /**
-     * @param string $date
+     * @param string $markDesc
      */
-    public function setDate(string $date): void
+    public function setMarkDesc(string $markDesc): void
     {
-        $this->date = $date;
+        $this->markDesc = $markDesc;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getStudentID(): ?string
+    public function getCourseID(): string
+    {
+        return $this->courseID;
+    }
+
+    /**
+     * @param string $courseID
+     */
+    public function setCourseID(string $courseID): void
+    {
+        $this->courseID = $courseID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarkCategoryID(): string
+    {
+        return $this->markCategoryID;
+    }
+
+    /**
+     * @param string $markCategoryID
+     */
+    public function setMarkCategoryID(string $markCategoryID): void
+    {
+        $this->markCategoryID = $markCategoryID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarkTypeID(): string
+    {
+        return $this->markTypeID;
+    }
+
+    /**
+     * @param string $markTypeID
+     */
+    public function setMarkTypeID(string $markTypeID): void
+    {
+        $this->markTypeID = $markTypeID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMcLabel(): string
+    {
+        return $this->mcLabel;
+    }
+
+    /**
+     * @param string $mcLabel
+     */
+    public function setMcLabel(string $mcLabel): void
+    {
+        $this->mcLabel = $mcLabel;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMcWeight(): int
+    {
+        return $this->mcWeight;
+    }
+
+    /**
+     * @param int $mcWeight
+     */
+    public function setMcWeight(int $mcWeight): void
+    {
+        $this->mcWeight = $mcWeight;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMcColor(): string
+    {
+        return $this->mcColor;
+    }
+
+    /**
+     * @param string $mcColor
+     */
+    public function setMcColor(string $mcColor): void
+    {
+        $this->mcColor = $mcColor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMtMark(): string
+    {
+        return $this->mtMark;
+    }
+
+    /**
+     * @param string $mtMark
+     */
+    public function setMtMark(string $mtMark): void
+    {
+        $this->mtMark = $mtMark;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMtDesc(): string
+    {
+        return $this->mtDesc;
+    }
+
+    /**
+     * @param string $mtDesc
+     */
+    public function setMtDesc(string $mtDesc): void
+    {
+        $this->mtDesc = $mtDesc;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubjectID(): string
+    {
+        return $this->subjectID;
+    }
+
+    /**
+     * @param string $subjectID
+     */
+    public function setSubjectID(string $subjectID): void
+    {
+        $this->subjectID = $subjectID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubjectName(): string
+    {
+        return $this->subjectName;
+    }
+
+    /**
+     * @param string $subjectName
+     */
+    public function setSubjectName(string $subjectName): void
+    {
+        $this->subjectName = $subjectName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTeacherID(): string
+    {
+        return $this->teacherID;
+    }
+
+    /**
+     * @param string $teacherID
+     */
+    public function setTeacherID(string $teacherID): void
+    {
+        $this->teacherID = $teacherID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTeacherName(): string
+    {
+        return $this->teacherName;
+    }
+
+    /**
+     * @param string $teacherName
+     */
+    public function setTeacherName(string $teacherName): void
+    {
+        $this->teacherName = $teacherName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTeacherSurname(): string
+    {
+        return $this->teacherSurname;
+    }
+
+    /**
+     * @param string $teacherSurname
+     */
+    public function setTeacherSurname(string $teacherSurname): void
+    {
+        $this->teacherSurname = $teacherSurname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStudentID(): string
     {
         return $this->studentID;
     }
 
     /**
-     * @param string|null $studentID
+     * @param string $studentID
      */
-    public function setStudentID(?string $studentID): void
+    public function setStudentID(string $studentID): void
     {
         $this->studentID = $studentID;
     }
@@ -216,60 +342,36 @@ class MarkEntity
     /**
      * @return string
      */
-    public function getCategoryID(): string
+    public function getStudentName(): string
     {
-        return $this->categoryID;
+        return $this->studentName;
     }
 
     /**
-     * @param string $categoryID
+     * @param string $studentName
      */
-    public function setCategoryID(string $categoryID): void
+    public function setStudentName(string $studentName): void
     {
-        $this->categoryID = $categoryID;
+        $this->studentName = $studentName;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getStudentFirstName(): ?string
+    public function getStudentSurname(): string
     {
-        return $this->student_firstName;
+        return $this->studentSurname;
     }
 
     /**
-     * @param string|null $student_firstName
+     * @param string $studentSurname
      */
-    public function setStudentFirstName(?string $student_firstName): void
+    public function setStudentSurname(string $studentSurname): void
     {
-        $this->student_firstName = $student_firstName;
+        $this->studentSurname = $studentSurname;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getStudentLastName(): ?string
-    {
-        return $this->student_lastName;
-    }
 
-    /**
-     * @param string|null $student_lastName
-     */
-    public function setStudentLastName(?string $student_lastName): void
-    {
-        $this->student_lastName = $student_lastName;
-    }
-
-    public function getStudentsName(): string
-    {
-        return $this->student_firstName . " " . $this->student_lastName;
-    }
-
-    public function getTeachersName(): string
-    {
-        return $this->firstName . " " . $this->lastName;
-    }
 
 
 }

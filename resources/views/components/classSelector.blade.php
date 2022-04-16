@@ -1,6 +1,6 @@
 <div class="py-4">
     <div class="px-4 py-5 bg-white shadow rounded-lg  sm:p-6 grid grid-cols-3 gap-10">
-        @if (!empty($form["classTeacher"][0]))
+        @if (!empty($teachings["classTeacher"][0]))
             <div x-data="{open: false}">
                 <label id="listbox-label" class="block text-sm font-medium text-gray-700">Třídní - (pouze pro
                     čtení)</label>
@@ -10,7 +10,7 @@
                             aria-haspopup="listbox" aria-expanded="true"
                             aria-labelledby="listbox-label">
                         @if (isset($selected) && $selected["type"] === "classTeacher")
-                            <span class="block truncate font-bold text-indigo-800"> {{$selected["title"]}} </span>
+                            <span class="block truncate font-bold text-indigo-800">{{$selected["title"]}}</span>
                         @else
                             <span class="block truncate"> Prosím vyberte si třídu </span>
                         @endif
@@ -44,11 +44,11 @@
                         tabindex="-1" role="listbox" aria-labelledby="listbox-label"
                         aria-activedescendant="listbox-option-3">
 
-                        @foreach($form["classTeacher"] as $className)
-                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{$className["id"]}}-classTeacher'"
+                        @foreach($teachings["classTeacher"] as $className)
+                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{$className["id"]}}'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $className["title"] ? "font-bold" : ""}}"> {{$className["title"]}} </span>
+                                <span class="block truncate {{isset($selected) && $selected["id"] === $className["id"] ? "font-bold" : "font-normal"}}"> {{$className["title"]}} </span>
                             </li>
                         @endforeach
                     </ul>
@@ -56,7 +56,7 @@
             </div>
         @endif
 
-        @if (!empty($form["courseTeacher"]))
+        @if (!empty($teachings["courseTeacher"]))
             <div x-data="{open: false}">
                 <label id="listbox-label" class="block text-sm font-medium text-gray-700">Vyučující - (možnost
                     editace)</label>
@@ -66,7 +66,7 @@
                             aria-haspopup="listbox" aria-expanded="true"
                             aria-labelledby="listbox-label">
                         @if (isset($selected) && $selected["type"] === "courseTeacher")
-                            <span class="block truncate font-bold text-indigo-800"> {{$selected["title"]}} </span>
+                            <span class="block truncate font-bold text-indigo-800">{{$selected["title"]}}</span>
                         @else
                             <span class="block truncate"> Prosím vyberte si vaší skupionu </span>
                         @endif
@@ -100,11 +100,11 @@
                         tabindex="-1" role="listbox" aria-labelledby="listbox-label"
                         aria-activedescendant="listbox-option-3">
 
-                        @foreach($form["courseTeacher"] as $courseName)
-                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{ $courseName["id"] }}-courseTeacher'"
+                        @foreach($teachings["courseTeacher"] as $courseName)
+                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{ $courseName["id"] }}'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $courseName["title"] ? "font-bold" : ""}}"> {{ $courseName["title"] }} </span>
+                                <span class="block truncate {{isset($selected) && $selected["id"] === $courseName["id"] ? "font-bold" : "font-normal"}}"> {{ $courseName["title"] }} </span>
                             </li>
                         @endforeach
                     </ul>
@@ -112,7 +112,7 @@
             </div>
         @endif
 
-        @if (!empty($form["garant"]))
+        @if (!empty($teachings["garant"]))
             <div x-data="{open: false}">
                 <label id="listbox-label" class="block text-sm font-medium text-gray-700">Garant - (pouze pro
                     čtení)</label>
@@ -122,7 +122,7 @@
                             aria-haspopup="listbox" aria-expanded="true"
                             aria-labelledby="listbox-label">
                         @if (isset($selected) && $selected["type"] === "garant")
-                            <span class="block truncate font-bold text-indigo-800"> {{$selected["title"]}} </span>
+                            <span class="block truncate font-bold text-indigo-800">{{$selected["title"]}}</span>
                         @else
                             <span class="block truncate"> Prosím vyberte si váš předmět </span>
                         @endif
@@ -156,11 +156,11 @@
                         tabindex="-1" role="listbox" aria-labelledby="listbox-label"
                         aria-activedescendant="listbox-option-3">
 
-                        @foreach($form["garant"] as $subjectName)
-                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{ $subjectName["id"] }}-garant'"
+                        @foreach($teachings["garant"] as $subjectName)
+                            <li @click="window.location.href = 'http://localhost/school-intranet/marks/{{$subjectName["id"]}}'"
                                 class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-700 hover:text-white"
                                 id="listbox-option-0" role="option">
-                                <span class="font-normal block truncate {{isset($selected) && $selected["title"] === $subjectName["title"] ? "font-bold" : ""}}"> {{ $subjectName["title"] }} </span>
+                                <span class="block truncate {{isset($selected) && $selected["id"] === $subjectName["id"] ? "font-bold" : "font-normal"}}"> {{ $subjectName["title"] }} </span>
                             </li>
                         @endforeach
                     </ul>

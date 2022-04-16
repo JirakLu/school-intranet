@@ -45,9 +45,9 @@ if (!function_exists("calculateAverage")) {
         $markXWeightSum = 0;
 
         foreach ($marks as $mark) {
-            if ($mark->getMark() !== "N" && $mark->getMark() !== "U") {
-                $weightSum += $mark->getWeight();
-                $markXWeightSum += $mark->getWeight() * $mark->getMark();
+            if ($mark->getMtMark() !== "N" && $mark->getMtMark() !== "U") {
+                $weightSum += $mark->getMcWeight();
+                $markXWeightSum += $mark->getMcWeight() * $mark->getMtMark();
             }
         }
 

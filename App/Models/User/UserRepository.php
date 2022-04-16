@@ -23,49 +23,49 @@ class UserRepository {
         return $this->db->getOne($sql, UserEntity::class, [new DbParam("email", trim($email))]);
     }
 
-    public function getTeachingByID(string $id): array
+    public function getTeachingByID(string $userID): array
     {
-        $classTeacher = $this->db->getAll("SELECT class.class_name, class.class_ID, subject.subject_ID, subject.name
-                                                FROM class 
-                                                JOIN `group` ON class.class_ID = `group`.class_ID
-                                                JOIN course ON `group`.group_ID = course.group_ID
-                                                JOIN subject ON course.subject_ID = subject.subject_ID
-                                                WHERE class.teacher_ID = :id
-                                                GROUP BY class.class_ID, subject.subject_ID", stdClass::class, [new DbParam("id", $id)]);
-
-        if ($classTeacher) {
-            $classTeacher = array_map(function($class) {
-                return ["title" => $class->class_name . " - " . $class->name, "id" => $class->class_ID . "-" . $class->subject_ID];
-            }, $classTeacher);
-        }
-        $courseTeacher = $this->db->getAll("SELECT course.course_ID, class.class_name, class.class_ID, `group`.name as group_name, `group`.group_ID, subject.name, subject.subject_ID
+        $classTeacher = $this->db->getAll("SELECT course.course_ID courseID, c.class_name className, g.name groupName, s.name subjectName
                                                 FROM course
-                                                JOIN subject ON course.subject_ID = subject.subject_ID
-                                                JOIN `group` ON course.group_ID = `group`.`group_ID`
-                                                JOIN class ON `group`.`class_ID` = class.class_ID
-                                                WHERE course.teacher_ID = :id
-                                                GROUP BY course.course_ID, class.class_ID, `group`.group_ID, subject.subject_ID", stdClass::class
-                                                , [new DbParam("id", $id)]);
-        $courseTeacher = array_map(function ($courseInfo) {
-            if ($courseInfo->class_name == $courseInfo->group_name) {
-                return  ["title" => $courseInfo->class_name . " - " . $courseInfo->name, "id" => $courseInfo->class_ID . "-" . $courseInfo->subject_ID];
-            }
-            return ["title" => $courseInfo->class_name . " - " . $courseInfo->group_name . " - " . $courseInfo->name, "id" => $courseInfo->class_ID . "-" . $courseInfo->group_ID . "-" . $courseInfo->subject_ID];
-        }, $courseTeacher);
-        $garant = $this->db->getAll("SELECT class.class_name, class.class_ID, subject.name, subject.subject_ID FROM subject 
-                                        JOIN course ON course.subject_ID = subject.subject_ID
-                                        JOIN `group` ON course.group_ID = `group`.group_ID
-                                        JOIN class ON class.class_ID = `group`.class_ID
-                                        WHERE subject.teacher_ID = :id
-                                        GROUP BY class.class_name, subject.name"
-                                        , stdClass::class, [new DbParam("id",$id)]);
-        if ($garant) {
-            $garant = array_map(function ($class) {
-                return ["title" => $class->class_name . " - " . $class->name, "id" => $class->class_ID . "-" . $class->subject_ID ];
-            }, $garant);
+                                                JOIN subject s on course.subject_ID = s.subject_ID
+                                                JOIN `group` g on course.group_ID = g.group_ID
+                                                JOIN class c on g.class_ID = c.class_ID
+                                                WHERE c.teacher_ID = :userID
+                                                ORDER BY s.name;", stdClass::class, [new DbParam("userID", $userID)]);
+
+        $courseTeacher = $this->db->getAll("SELECT course.course_ID courseID, c.class_name className, g.name groupName, s.name subjectName
+                                                FROM course
+                                                JOIN subject s on course.subject_ID = s.subject_ID
+                                                JOIN `group` g on course.group_ID = g.group_ID
+                                                JOIN class c on g.class_ID = c.class_ID
+                                                WHERE course.teacher_ID = :userID
+                                                ORDER BY s.name", stdClass::class, [new DbParam("userID", $userID)]);
+
+
+        $garant = $this->db->getAll("SELECT course.course_ID courseID, c.class_name className, g.name groupName, s.name subjectName
+                                            FROM course
+                                            JOIN subject s on course.subject_ID = s.subject_ID
+                                            JOIN `group` g on course.group_ID = g.group_ID
+                                            JOIN class c on g.class_ID = c.class_ID
+                                            WHERE s.teacher_ID = :userID
+                                            ORDER BY s.name"
+                                        , stdClass::class, [new DbParam("userID",$userID)]);
+
+        return ["classTeacher" => $this->formatTeachingSelection($classTeacher, "classTeacher"),
+                "courseTeacher" => $this->formatTeachingSelection($courseTeacher, "courseTeacher"),
+                "garant" => $this->formatTeachingSelection($garant, "garant")];
+    }
+
+    private function formatTeachingSelection($selection, string $type): array|null
+    {
+        if ($selection) {
+            $selection = array_map(function($course) use($type) {
+                if ($course->className === $course -> groupName) return ["title" => $course->className . " - " . $course->subjectName, "id" => $course->courseID . "-$type"];
+                return ["title" => $course->className . " - " . $course->groupName . " - " . $course->subjectName, "id" => $course->courseID . "-$type"];
+            }, $selection);
         }
 
-        return ["classTeacher" => $classTeacher, "courseTeacher" => $courseTeacher, "garant" => $garant];
+        return $selection;
     }
 
     public function checkIfEmailExists(string $email): bool

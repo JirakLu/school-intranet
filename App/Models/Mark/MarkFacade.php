@@ -13,9 +13,9 @@ class MarkFacade
     }
 
     /** @return array<string, array<int, MarkEntity>>|null */
-    public function getMarksForUser(string $id): array|null
+    public function getMarksForStudent(string $id): array|null
     {
-        return $this->markRepo->getMarksForUser($id);
+        return $this->markRepo->getMarksForStudent($id);
     }
 
     /** @return array<string, array<int, MarkEntity>>|null */
