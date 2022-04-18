@@ -9,18 +9,8 @@ use PDO;
 
 class Db
 {
-    private PDO $connection;
-
     private static Db|null $instance = null;
-
-    public static function getInstance(): Db
-    {
-        if (self::$instance == null){
-            self::$instance = new Db();
-        }
-        return self::$instance;
-
-    }
+    private PDO $connection;
 
     /**
      * @throws Exception
@@ -41,6 +31,15 @@ class Db
                 PDO::MYSQL_ATTR_MULTI_STATEMENTS => false
             ]
         );
+    }
+
+    public static function getInstance(): Db
+    {
+        if (self::$instance == null) {
+            self::$instance = new Db();
+        }
+        return self::$instance;
+
     }
 
     /**
@@ -71,8 +70,8 @@ class Db
      * @param string $sql
      * @param class-string $className
      * @param DbParam[] $params
-     * @throws Exception
      * @return array<int, object> | bool
+     * @throws Exception
      */
     public function getAll(string $sql, string $className, array $params = []): array|bool
     {
@@ -107,10 +106,7 @@ class Db
         if (!$stmt->execute())
             throw new Exception("Dotaz {$sql} se neprovede");
 
-        $stmt->setFetchMode(PDO::FETCH_NUM);
-        $result = $stmt->fetch();
-
-        return is_array($result) ? $result[0] : null;
+        return $stmt->fetchColumn();
     }
 
     /**
