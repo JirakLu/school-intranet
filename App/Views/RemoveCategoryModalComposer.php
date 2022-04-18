@@ -7,7 +7,7 @@ use App\Session;
 use Illuminate\View\View;
 
 
-class MarkAddModalComposer
+class RemoveCategoryModalComposer
 {
 
     /**
@@ -19,9 +19,7 @@ class MarkAddModalComposer
     public function compose(View $view)
     {
         $markFacade = new MarkFacade();
-        $categories = $markFacade->getMarkCategories(Session::get("user_ID"), true);
-        $markTypes = $markFacade->getMarkTypes();
+        $categories = $markFacade->getMarkCategories(Session::get("user_ID"), false);
         $view->with("categories", $categories);
-        $view->with("markTypes", $markTypes);
     }
 }

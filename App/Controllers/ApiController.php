@@ -106,4 +106,19 @@ class ApiController extends AController
         $this->redirectURL($_POST["backURL"]);
     }
 
+    /*
+    [backURL] => http://localhost/school-intranet/marks/34-courseTeacher
+    [categoryID] => 5
+     */
+    public function removeCategory(): void
+    {
+        $this->privateRoute();
+
+        $markFacade = new MarkFacade();
+
+        $markFacade->removeCategory($_POST["categoryID"], Session::get("user_ID"));
+
+        $this->redirectURL($_POST["backURL"]);
+    }
+
 }

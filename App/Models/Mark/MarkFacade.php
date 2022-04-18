@@ -29,9 +29,9 @@ class MarkFacade
         return $this->markRepo->checkAccess($userID,$slug);
     }
 
-    public function getMarkCategories(string $userID)
+    public function getMarkCategories(string $userID, bool $getDefaults)
     {
-        return $this->markRepo->getMarkCategories($userID);
+        return $this->markRepo->getMarkCategories($userID, $getDefaults);
     }
 
     public function getMarkTypes()
@@ -72,5 +72,9 @@ class MarkFacade
     public function addCategory(string $userID, int $weight, string $color, string $label): void
     {
         $this->markRepo->addCategory($userID, $weight, $color, $label);
+    }
+
+    public function removeCategory(string $categoryID, string $userID): void {
+        $this->markRepo->removeCategory($categoryID, $userID);
     }
 }

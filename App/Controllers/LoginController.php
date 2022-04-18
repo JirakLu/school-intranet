@@ -21,7 +21,7 @@ class LoginController extends AController
         if ($user) {
             if ($_POST["remember-me"]) $authService->setAuthCookie();
             cleanError();
-            $this->redirect("dashboard");
+            $this->redirect("marks");
         } else {
             $this->redirect("login");
         }

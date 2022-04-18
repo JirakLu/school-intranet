@@ -145,9 +145,10 @@ class MarkRepository
         return false;
     }
 
-    public function getMarkCategories(string $userID)
+    public function getMarkCategories(string $userID, bool $getDefaults)
     {
-        $sql = "SELECT category_ID, label, weight, color FROM mark_category WHERE teacher_ID is null || teacher_ID = :teacherID";
+        $sql = "SELECT category_ID, label, weight, color FROM mark_category WHERE teacher_ID = :teacherID";
+        if ($getDefaults) $sql = "SELECT category_ID, label, weight, color FROM mark_category WHERE teacher_ID is null OR teacher_ID = :teacherID";
         $categories = $this->db->getAll($sql, stdClass::class, [new DbParam("teacherID", $userID)]);
 
         $ids = array_map(function ($category) {
@@ -235,5 +236,12 @@ class MarkRepository
         $sql = "INSERT INTO mark_category SET label = :label, weight = :weight, color = :color, teacher_ID = :teacherID";
 
         $this->db->exec($sql, [new DbParam("label", $label), new DbParam("weight", $weight), new DbParam("color", $color), new DbParam("teacherID", $userID)]);
+    }
+
+    public function removeCategory(string $categoryID, string $userID): void {
+        $sql = "DELETE FROM mark_category WHERE mark_category.category_ID = :categoryID AND mark_category.teacher_ID = :teacherID";
+
+        if (!$this->db->getValue("SELECT count(*) FROM mark WHERE mark_category_ID = :categoryID", [new DbParam("categoryID", $categoryID)]))
+            $this->db->exec($sql, [new DbParam("categoryID", $categoryID), new DbParam("teacherID", $userID)]);
     }
 }

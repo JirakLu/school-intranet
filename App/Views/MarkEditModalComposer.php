@@ -19,7 +19,7 @@ class MarkEditModalComposer
     public function compose(View $view)
     {
         $markFacade = new MarkFacade();
-        $categories = $markFacade->getMarkCategories(Session::get("user_ID"));
+        $categories = $markFacade->getMarkCategories(Session::get("user_ID"), true);
         $markTypes = $markFacade->getMarkTypes();
         $view->with("categories", $categories);
         $view->with("markTypes", $markTypes);

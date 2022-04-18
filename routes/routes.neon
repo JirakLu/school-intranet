@@ -66,6 +66,9 @@
 "/api/category/addCategory":
     defaults: "ApiController:addCategory"
 
+"/api/category/removeCategory":
+    defaults: "ApiController:removeCategory"
+
 #DB FILLER
 
 "/filler":
