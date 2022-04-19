@@ -106,5 +106,11 @@ class UserRepository {
         return (bool)$this->db->getValue($sql, [new DbParam("id", $id)]);
     }
 
+    public function removeAuthCookie(string $userID): void
+    {
+        $sql = "UPDATE user SET auth_cookie = NULL, cookie_selector = NULL WHERE user_ID = :userID";
+        $this->db->exec($sql, [new DbParam("userID", $userID)]);
+    }
+
 
 }

@@ -61,4 +61,9 @@ class UserFacade {
         return $this->userRepo->checkIfTeacher($id);
     }
 
+    public function removeAuthCookie(string $userID): void
+    {
+        $this->userRepo->removeAuthCookie($userID);
+    }
+
 }

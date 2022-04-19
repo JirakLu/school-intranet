@@ -37,6 +37,18 @@ class AuthService {
         return false;
     }
 
+    public function logout(): void
+    {
+        $this->userFacade->removeAuthCookie(Session::get("user_ID"));
+
+        if (isset($_COOKIE['remember'])) {
+            unset($_COOKIE['remember']);
+            setcookie('remember', null, -1, '/');
+        }
+
+        Session::destroy();
+    }
+
     public function setAuthCookie(): void
     {
         $this->userFacade->setAuthCookie(Session::get("user_ID"));

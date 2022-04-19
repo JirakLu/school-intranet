@@ -29,11 +29,9 @@ class LoginController extends AController
 
     public function logout(): void
     {
-        Session::destroy();
-        if (isset($_COOKIE['remember'])) {
-            unset($_COOKIE['remember']);
-            setcookie('remember', null, -1, '/');
-        }
+        $authService = new AuthService();
+        $authService->logout();
+
         $this->redirect("home");
     }
 }
