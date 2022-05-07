@@ -19,6 +19,20 @@
     "nette/neon": "^3.3",
     "jenssegers/blade": "^1.4",
     "ext-pdo": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-ctype": "*",
+    "ext-dom": "*",
+    "ext-fileinfo": "*",
+    "ext-gd": "*",
+    "ext-iconv": "*",
+    "ext-libxml": "*",
+    "ext-mbstring": "*",
+    "ext-simplexml": "*",
+    "ext-xml": "*",
+    "ext-xmlreader": "*",
+    "ext-xmlwriter": "*",
+    "ext-zip": "*",
+    "ext-zlib": "*",
+    "phpoffice/phpspreadsheet": "^1.23"
   }
 }

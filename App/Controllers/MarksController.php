@@ -54,8 +54,10 @@ class MarksController extends AController
         $selected = [
             "id" => $courseID . "-" . $type,
             "type" => $type,
-            "title" => $selectedTitle
+            "title" => $selectedTitle,
+            "courseID" => $courseID
         ];
+
 
         if ($selected["type"] === "courseTeacher") {
             $this->renderAuth("pages.private.marksTeacherEdit", "restricted", Session::get("isLoggedIn"),

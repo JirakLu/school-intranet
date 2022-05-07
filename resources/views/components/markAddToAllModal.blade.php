@@ -95,7 +95,7 @@
                 </div>
 
                 <button type="submit"
-                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm cursor-pointer text-base font-medium rounded-md bg-green-100 hover:bg-green-200 text-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 border border-green-500">
+                        class="inline-flex !mt-4 w-full justify-center items-center px-4 py-2 border border-transparent shadow-sm cursor-pointer text-base font-medium rounded-md bg-green-100 hover:bg-green-200 text-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 border border-green-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-3 h-5 w-5 text-green-500" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"

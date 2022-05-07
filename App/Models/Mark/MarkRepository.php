@@ -17,6 +17,67 @@ class MarkRepository
     }
 
 
+    public function exportMarksForStudent(string $userID): array {
+        $sql = "SELECT subject.name, subject.subject_ID 
+                FROM subject 
+                JOIN course c on subject.subject_ID = c.subject_ID 
+                WHERE c.teacher_ID = :userID";
+
+        $subjects = $this->db->getAll($sql, stdClass::class, [new DbParam("userID", $userID)]);
+
+        print_r("<pre>");
+        print_r($subjects);
+        exit();
+
+        return [];
+    }
+
+    public function exportMarksForTeacher(string $courseID, string $userID): array {
+        $sql = "SELECT user.user_ID userID, user.first_name firstName, user.last_name lastName 
+                FROM user
+                JOIN student_in_group sg ON user.user_ID = sg.student_ID
+                JOIN `group` g on sg.group_ID = g.group_ID
+                JOIN course c on g.group_ID = c.group_ID
+                WHERE c.course_ID = :courseID AND c.teacher_ID = :userID";
+
+        $students = $this->db->getAll($sql, stdClass::class, [new DbParam("userID", $userID), new DbParam("courseID", $courseID)]);
+
+        /* @var MarkEntity[] */
+        $marks = $this->db->getAll("SELECT mark.student_ID studentID, mt.mark mtMark, mc.weight mcWeight FROM mark
+                                        JOIN mark_type mt on mark.mark_type_ID = mt.mark_type_ID
+                                        JOIN mark_category mc on mark.mark_category_ID = mc.category_ID
+                                        JOIN course c on c.course_ID = mark.course_ID
+                                        WHERE c.teacher_ID = :userID AND c.course_ID = :courseID
+                                        ORDER BY mark.date", MarkEntity::class, [new DbParam("userID", $userID), new DbParam("courseID", $courseID)]);
+
+        $formattedMarks = [];
+        $formattedMarks["subjects"] = $this->db->getValue("SELECT subject.name FROM subject
+                                                                JOIN course c on subject.subject_ID = c.subject_ID
+                                                                WHERE c.course_ID = :courseID", [new DbParam("courseID", $courseID)]);
+        foreach ($students as $student) {
+            $markss = array_filter($marks, function ($mark) use ($student) {
+                return $mark->getStudentID() == $student->userID;
+            });
+            $marksss = [];
+            foreach ($markss as $omegalul) {
+                $marksss[] = $omegalul->getMtMark();
+            }
+
+
+            $formattedMarks[$student->firstName . " " . $student->lastName] = [
+                "average" => calculateAverage($markss, 2),
+                "averageRounded" => calculateAverage($markss, 0),
+                "marks" => $marksss
+            ];
+        }
+//        print_r("<pre>");
+//        print_r($formattedMarks);
+//        exit();
+
+
+        return $formattedMarks;
+    }
+
     public function getMarksForStudent(string $studentID): array|null
     {
         $sql = "SELECT mark.mark_ID markID, mark.date, mark.latka, mark.description markDesc, mark.course_ID courseID, mark.student_ID studentID, mark.mark_category_ID markCategoryID, mark.mark_type_ID markTypeID,

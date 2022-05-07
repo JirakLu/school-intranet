@@ -63,6 +63,9 @@
 "/api/marks/addToAll":
     defaults: "ApiController:addToAll"
 
+"/api/marks/export":
+    defaults: "ApiController:export"
+
 "/api/category/addCategory":
     defaults: "ApiController:addCategory"
 
