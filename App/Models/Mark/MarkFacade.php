@@ -81,4 +81,8 @@ class MarkFacade
     public function exportMarksForTeacher(string $courseID, string $userID): array {
         return $this->markRepo->exportMarksForTeacher($courseID, $userID);
     }
+
+    public function exportMarksForStudent(string $userID): array {
+        return $this->markRepo->exportMarksForStudent($userID);
+    }
 }

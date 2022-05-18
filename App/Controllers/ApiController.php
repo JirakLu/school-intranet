@@ -130,47 +130,55 @@ class ApiController extends AController
      */
     public function export(): void
     {
+        $markFacade = new MarkFacade();
+
         if ($_POST["courseID"]) {
             // teacher export
-            $markFacade = new MarkFacade();
+            if (!$markFacade->checkAccessCourseID(Session::get("user_ID"), $_POST["courseID"])) $this->redirect("restricted");
             $marks = $markFacade->exportMarksForTeacher($_POST["courseID"], $_POST["userID"]);
-
-            $subjectName = array_shift($marks);
-
-            $alphabet = range('A', 'Z');
-            $marksWidth = 1;
-
-            foreach ($marks as $mark) {
-                if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"] ) + 1;
-            }
-
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()->setTitle($subjectName);
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $row = 1;
-            foreach ($marks as $name => $markInfo) {
-                $sheet->setCellValue($alphabet[0].$row, $name);
-
-                for ($i = 0; $i < $marksWidth; $i++) {
-                    $sheet->setCellValue($alphabet[$i+1].$row, key_exists($i ,$markInfo["marks"]) ? $markInfo["marks"][$i] : '');
-                }
-
-                $sheet->setCellValue($alphabet[$marksWidth+1].$row, $markInfo["averageRounded"]);
-                $sheet->setCellValue($alphabet[$marksWidth+2].$row, $markInfo["average"]);
-
-                $row++;
-            }
-
-            $writer = new Xlsx($spreadsheet);
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment; filename="'. urlencode("znamky.xlsx").'"');
-            $writer->save('php://output');
+            $this->generateExcel($marks);
 
         } else {
             // student export
-
+            $marks = $markFacade->exportMarksForStudent($_POST["userID"]);
+            $this->generateExcel($marks);
         }
+    }
+
+    private function generateExcel(array $marks): void {
+        $subjectName = array_shift($marks);
+
+        $alphabet = range('A', 'Z');
+        $marksWidth = 1;
+
+        foreach ($marks as $mark) {
+            if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"] ) + 1;
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()->setTitle($subjectName);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $row = 1;
+        foreach ($marks as $name => $markInfo) {
+            $sheet->setCellValue($alphabet[0].$row, $name);
+
+            for ($i = 0; $i < $marksWidth; $i++) {
+                $sheet->setCellValue($alphabet[$i+1].$row, key_exists($i ,$markInfo["marks"]) ? $markInfo["marks"][$i] : '');
+            }
+
+            $sheet->setCellValue($alphabet[$marksWidth+1].$row, $markInfo["averageRounded"]);
+            $sheet->setCellValue($alphabet[$marksWidth+2].$row, $markInfo["average"]);
+
+            $row++;
+        }
+        $sheet->getStyle($alphabet[1] . ":" . $alphabet[$marksWidth+2])->getAlignment()->setHorizontal('center');
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode("znamky.xlsx").'"');
+        $writer->save('php://output');
     }
 
 }
