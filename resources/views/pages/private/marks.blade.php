@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-6">
             <!-- Replace with your content -->
             <div class="py-4">
-                <div class="flex flex-col gap-2 px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+                <div class="flex flex-col gap-4 px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                     <div class="flex justify-end">
                         <form class="hidden opacity-0" id="export" method="POST" action="{{$createLink("api/marks/export")}}">
                             <input name="courseID" type="text" value="">

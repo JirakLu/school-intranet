@@ -18,16 +18,6 @@ class PrivateController extends AController
     }
 
     /**
-     * Controller for /files
-     * @return void
-     */
-    public function renderFiles(): void
-    {
-        $this->privateRoute();
-        $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"));
-    }
-
-    /**
      * Controller for /absence
      * @return void
      */

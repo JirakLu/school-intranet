@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="py-4">
-                    <div class="flex flex-col gap-2 px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+                    <div class="flex flex-col gap-4 px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
                         <div class="flex justify-end">
                             <form class="hidden opacity-0" id="export" method="POST" action="{{$createLink("api/marks/export")}}">
                                 <input name="courseID" type="text" value="{{$selected["courseID"]}}">

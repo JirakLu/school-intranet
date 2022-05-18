@@ -29,7 +29,7 @@ class DbFiller
     private array $MARKS_CATEGORY = [["Aktivita", 1, "#bfb1ff"], ["Malá písemná práce", 2, "#45bd7c"], ["Zkoušení", 3, "#df6baa"], ["Velká písemná práce", 5, "#3c8baf"]];
 
     /** @var string[] */
-    private array $CLASSES = ["1.D", "2.D", "3.D", "4.D"];
+    private array $CLASSES = ["1.D", "2.D"];
 
     private string $teachers = "";
 
@@ -111,7 +111,7 @@ class DbFiller
 
     private function fillCourses(): void
     {
-        $this->getUsers(20, true);
+        $this->getUsers(10, true);
 
         $classes = $this->db->getAll("SELECT * FROM class", stdClass::class);
         $teachers = $this->db->getAll("SELECT teacher_ID FROM teacher", stdClass::class);

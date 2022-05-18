@@ -44,7 +44,9 @@
     defaults: "PrivateController:renderPersonalInfo"
 
 "/files":
-    defaults: "PrivateController:renderFiles"
+    defaults: "FilesController:renderFiles"
+"/files/<param>":
+    defaults: "FilesController:folder:$param"
 
 "/absence":
     defaults: "PrivateController:renderAbsence"
