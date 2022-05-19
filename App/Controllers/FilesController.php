@@ -15,21 +15,24 @@ class FilesController extends AController
     public function renderFiles(): void
     {
         $this->privateRoute();
-        $folders = new FilesFacade();
-        $folders = $folders->getRootFolders(Session::get("userID"));
-        $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"), ["folders" => $folders, "menu" => ["home" => [true, "files"]]]);
+        $facade = new FilesFacade();
+        $folders = $facade->getRootFolders(Session::get("userID"));
+        $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"), ["folders" => $folders, "files" => [], "menu" => ["root" => [true, ""]]]);
     }
 
     /**
      * Controller for /files/***
+     * @param string $id
      * @return void
      */
     public function folder(string $id): void
     {
         $this->privateRoute();
-        $folders = new FilesFacade();
-        $folders = $folders->getFolders($id, Session::get("userID"));
-        $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"), ["folders" => $folders]);
+        $facade = new FilesFacade();
+        $menu = $facade->getMenu($id);
+        $folders = $facade->getFolders($id, Session::get("userID"));
+        $files = $facade->getFiles($id);
+        $this->renderAuth("pages.private.files", "restricted", Session::get("isLoggedIn"), ["folders" => $folders, "files" => $files, "menu" => $menu]);
     }
 
 }

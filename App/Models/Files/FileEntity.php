@@ -4,7 +4,7 @@ namespace App\Models\Files;
 
 class FileEntity
 {
-    // FOLDER
+    // FILE
     private string $fileID;
     private string $name;
     private string $path;

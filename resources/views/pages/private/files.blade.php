@@ -52,9 +52,10 @@
                             class="bg-white border border-gray-200 rounded-md shadow-md px-6 flex space-x-4">
                             <li class="flex h-[46px]">
                                 <div class="flex items-center">
-                                    <a href="{{$createLink($menu["home"][1])}}" class="text-gray-400 hover:text-gray-500">
+                                    <a href="{{$createLink("files")}}" class="text-gray-400 hover:text-gray-500">
                                         <!-- Heroicon name: solid/home -->
-                                        <svg class="flex-shrink-0 h-5 w-5 {{$menu["home"][0] ? 'text-indigo-500 font-bold' : ''}}" xmlns="http://www.w3.org/2000/svg"
+                                        <svg class="flex-shrink-0 h-5 w-5 {{$menu["root"][0] ? 'text-indigo-500 font-bold' : ''}}"
+                                             xmlns="http://www.w3.org/2000/svg"
                                              viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                                         </svg>
@@ -63,8 +64,8 @@
                                 </div>
                             </li>
 
-                            @foreach($menu as $key => $m)
-                                @if($key != "home")
+                            @foreach($menu as $key => $item)
+                                @if($key != "root")
                                     <li class="flex">
                                         <div class="flex items-center">
                                             <svg class="flex-shrink-0 w-6 h-full text-gray-500" viewBox="0 0 24 44"
@@ -72,7 +73,8 @@
                                                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                                 <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z"/>
                                             </svg>
-                                            <a href="{{$createLink("files/" . $m[1])}}" class="capitalize ml-4 text-sm hover:text-gray-700 {{$m[0] ? 'text-indigo-500 font-bold' : 'font-medium text-gray-500'}}">{{$key}}</a>
+                                            <a href="{{$createLink("files/" . $item[1])}}"
+                                               class="capitalize ml-4 text-sm hover:text-gray-700 {{$item[0] ? 'text-indigo-500 font-bold' : 'font-medium text-gray-500'}}">{{$key}}</a>
                                         </div>
                                     </li>
                                 @endif
@@ -86,8 +88,16 @@
                             <legend class="sr-only">Složky</legend>
                             <div class="flex gap-8 flex-wrap">
 
+                                @if(empty($folders) && empty($files))
+                                    <div class="px-4 py-2">
+                                        <span class="text-2xl leading-7 font-semibold">Máš tu nějak prázdno 🤔</span>
+                                    </div>
+                                @endif
+
                                 @foreach($folders as $folder)
-                                    <label @dblclick="window.location = '{{$createLink("files/" . $folder->getFolderID())}}'" for="{{$folder->getFolderID()}}" class="relative cursor-pointer flex items-center justify-center flex-col gap-1 p-2 pt-3">
+                                    <label @dblclick="window.location = '{{$createLink("files/" . $folder->getFolderID())}}'"
+                                           for="folder-{{$folder->getFolderID()}}"
+                                           class="relative cursor-pointer flex items-center justify-center flex-col gap-1 p-2 pt-3">
                                         <svg class="h-16 w-16" xmlns="http://www.w3.org/2000/svg"
                                              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                              viewBox="0 0 58 58" xml:space="preserve">
@@ -98,8 +108,33 @@
                                     </svg>
                                         <span class="text-sm text-gray-700 font-semibold capitalize">{{$folder->getName()}}</span>
 
-                                        <input id="{{$folder->getFolderID()}}" name="{{$folder->getFolderID()}}" type="checkbox"
+                                        <input id="folder-{{$folder->getFolderID()}}" name="folder-{{$folder->getFolderID()}}" value="folder-{{$folder->getFolderID()}}"
+                                               type="checkbox"
                                                class="absolute top-0.5 right-0.5 focus:!ring-0 focus:!outline-0 h-4 w-4 text-amber-600 border-gray-300 rounded">
+                                    </label>
+                                @endforeach
+
+                                @foreach($files as $file)
+                                    <label @dblclick="window.location = '{{$createLink("api/file/" . $file->getFileID())}}'"
+                                           for="file-{{$file->getFileID()}}"
+                                           class="relative cursor-pointer flex items-center justify-center flex-col gap-1 p-2 pt-3">
+                                        <svg class="h-16 w-16" viewBox="0 0 48 48"
+                                             xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 48 48">
+                                            <polygon fill="#90CAF9" points="40,45 8,45 8,3 30,3 40,13"/>
+                                            <polygon fill="#E1F5FE" points="38.5,14 29,14 29,4.5"/>
+                                            <g fill="#1976D2">
+                                                <rect x="16" y="21" width="17" height="2"/>
+                                                <rect x="16" y="25" width="13" height="2"/>
+                                                <rect x="16" y="29" width="17" height="2"/>
+                                                <rect x="16" y="33" width="13" height="2"/>
+                                            </g>
+                                        </svg>
+
+                                        <span class="text-sm text-gray-700 font-semibold capitalize">{{$file->getName()}}.<span class="lowercase">{{$file->getFileType()}}</span></span>
+
+                                        <input id="file-{{$file->getFileID()}}" name="file-{{$file->getFileID()}}" value="file-{{$file->getFileID()}}"
+                                               type="checkbox"
+                                               class="absolute top-0.5 right-0.5 focus:!ring-0 focus:!outline-0 h-4 w-4 text-blue-500 border-gray-300 rounded">
                                     </label>
                                 @endforeach
 

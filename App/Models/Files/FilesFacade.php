@@ -22,4 +22,14 @@ class FilesFacade
         return $this->fileRepo->getFolders($id, $userID);
     }
 
+    public function getFiles(string $id): array
+    {
+        return $this->fileRepo->getFiles($id);
+    }
+
+    public function getMenu(string $id): array
+    {
+        return $this->fileRepo->getMenu($id);
+    }
+
 }
