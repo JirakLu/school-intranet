@@ -17,14 +17,14 @@ class FilesFacade
         return $this->fileRepo->checkAccess($id, $userID);
     }
 
-    public function getFilePath(string $id): string
+    public function getFileInfo(string $id): array
     {
-        return $this->fileRepo->getFilePath($id);
+        return $this->fileRepo->getFileInfo($id);
     }
 
-    public function getFolderPath(string $id): string
+    public function getFolderInfo(string $id): array
     {
-        return $this->fileRepo->getFolderPath($id);
+        return $this->fileRepo->getFolderInfo($id);
     }
 
     public function getRootFolders(string $userID): array
@@ -54,6 +54,11 @@ class FilesFacade
     public function removeFile(string $id, string $userID): void
     {
         $this->fileRepo->removeFile($id, $userID);
+    }
+
+    public function removeFolder(string $id, string $userID): void
+    {
+        $this->fileRepo->removeFolder($id, $userID);
     }
 
     public function addFile(string $name, string $parent, string $fileType): string

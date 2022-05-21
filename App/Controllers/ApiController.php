@@ -5,8 +5,11 @@ namespace App\Controllers;
 use App\Models\Files\FilesFacade;
 use App\Models\Mark\MarkFacade;
 use App\Session;
+use FilesystemIterator;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ZipArchive;
 
 class ApiController extends AController
@@ -147,6 +150,10 @@ class ApiController extends AController
         }
     }
 
+
+    // ----------------- FILES ------------------- \\
+
+
     /*
     [file] => 1
     [back] => ''
@@ -154,9 +161,11 @@ class ApiController extends AController
     public function getFile(): void
     {
         $fileFacade = new FilesFacade();
-        $path = $fileFacade->getFilePath($_POST["file"]);
+        $info = $fileFacade->getFileInfo($_POST["file"]);
 
-        $this->sendFile($path);
+        $this->sendFile($info["path"], $info["name"]);
+
+        $this->redirectURL($_POST["backURL"]);
     }
 
     /*
@@ -178,13 +187,13 @@ class ApiController extends AController
 
             if (isset($_POST["file"])) {
                 foreach ($_POST["file"] as $file) {
-                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFilePath($file));
+                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFileInfo($file)["path"]);
                 }
             }
 
             if (isset($_POST["folder"])) {
                 foreach ($_POST["folder"] as $folder) {
-                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFolderPath($folder));
+                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFolderInfo($folder)["path"]);
                 }
             }
 
@@ -248,26 +257,64 @@ class ApiController extends AController
     {
         $fileFacade = new FilesFacade();
 
-        foreach ($_POST["file"] as $file) {
-            $fileFacade->removeFile($file, Session::get("user_ID"));
+        if (isset($_POST["file"])) {
+            foreach ($_POST["file"] as $file) {
+                $fileInfo = $fileFacade->getFileInfo($file);
+                unlink(getCfgVar("storage") . $fileInfo["path"]);
+
+                $fileFacade->removeFile($file, Session::get("user_ID"));
+            }
         }
 
-        foreach ($_POST["folder"] as $folder) {
-            $fileFacade->removeFolder($folder, Session::get("user_ID"));
+
+        if (isset($_POST["folder"])) {
+            foreach ($_POST["folder"] as $folder) {
+                $folderInfo = $fileFacade->getFolderInfo($folder);
+
+                $dir = getCfgVar("storage") . $folderInfo["path"];
+                $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+                $files = new RecursiveIteratorIterator($it,
+                    RecursiveIteratorIterator::CHILD_FIRST);
+                foreach($files as $file) {
+                    if ($file->isDir()){
+                        rmdir($file->getRealPath());
+                    } else {
+                        unlink($file->getRealPath());
+                    }
+                }
+                rmdir($dir);
+
+                $fileFacade->removeFolder($folder, Session::get("user_ID"));
+            }
         }
+
+        $this->redirectURL($_POST["backURL"]);
     }
 
-    private function sendFile(string $file): void
+    private function sendFile(string $path, string $name): void
     {
-        $file = getCfgVar("storage") . $file;
-        if (file_exists($file)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($file).'"');
+
+        $file = getCfgVar("storage") . $path;
+        if(file_exists($file)){
+
+            //Get file type and set it as Content Type
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            header('Content-Type: ' . finfo_file($finfo, $file));
+            finfo_close($finfo);
+
+            //Use Content-Disposition: attachment to specify the filename
+            header('Content-Disposition: attachment; filename='.$name);
+
+            //No cache
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
+
+            //Define file size
             header('Content-Length: ' . filesize($file));
+
+            ob_clean();
+            flush();
             readfile($file);
             exit;
         }

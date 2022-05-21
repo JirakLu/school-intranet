@@ -5,6 +5,7 @@ namespace App\Models\Files;
 use App\Models\DB\Db;
 use App\Models\DB\DbParam;
 use PDO;
+use stdClass;
 
 
 class FilesRepository
@@ -14,6 +15,7 @@ class FilesRepository
 
     private array $tempMenu;
     private string $tempID;
+    private array $folderToRemove = [];
 
     public function __construct()
     {
@@ -62,8 +64,21 @@ class FilesRepository
                 JOIN folder f on file.folder_ID = f.folder_ID
                 WHERE file.file_ID = :fileID AND f.user_ID = :userID";
         $this->db->exec($sql, [new DbParam("fileID", $id), new DbParam("userID", $userID)]);
-        unlink(getCfgVar("storage") . $path);
+    }
 
+    public function removeFolder(string $id, string $userID): void
+    {
+        $folder = $this->db->getAll("SELECT path, folder_ID folderID FROM folder WHERE parent_ID = :folderID AND user_ID = :userID"
+            , stdClass::class, [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
+
+        $this->db->exec("DELETE file.* FROM file WHERE folder_ID = :folderID", [new DbParam("folderID", $id)]);
+
+        if (count($folder) > 0) {
+            foreach ($folder as $f) {
+                $this->removeFolder($f->folderID, $userID);
+            }
+        }
+        $this->db->exec("DELETE folder.* FROM folder WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
     }
 
     public function getMenu(string $id): array
@@ -93,14 +108,16 @@ class FilesRepository
         }
     }
 
-    public function getFilePath(string $id): string
+    public function getFileInfo(string $id): array
     {
-        return $this->db->getValue("SELECT path FROM file WHERE file_ID = :id", [new DbParam("id", $id)]);
+        $file = $this->db->getOne("SELECT path, name FROM file WHERE file_ID = :id", stdClass::class, [new DbParam("id", $id)]);
+        return ["path" => $file->path, "name" => $file->name];
     }
 
-    public function getFolderPath(string $id): string
+    public function getFolderInfo(string $id): array
     {
-        return $this->db->getValue("SELECT path FROM folder WHERE folder_ID = :id", [new DbParam("id", $id)]);
+        $folder = $this->db->getOne("SELECT path, name FROM folder WHERE folder_ID = :id", stdClass::class, [new DbParam("id", $id)]);
+        return ["path" => $folder->path, "name" => $folder->name];
     }
 
     public function createFolder(string $parent, string $name, string $userID, bool $private): string
