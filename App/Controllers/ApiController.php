@@ -15,6 +15,7 @@ use ZipArchive;
 class ApiController extends AController
 {
 
+    private array $debug;
 
     /*
     [markID] => 2052
@@ -181,31 +182,33 @@ class ApiController extends AController
         $fileFacade = new FilesFacade();
 
         if (isset($_POST["file"]) || isset($_POST["folder"])) {
-            $zipname = 'file.zip';
-            $zip = new ZipArchive;
-            $zip->open($zipname, ZipArchive::CREATE);
 
-            if (isset($_POST["file"])) {
-                foreach ($_POST["file"] as $file) {
-                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFileInfo($file)["path"]);
-                }
-            }
+            $zip = new ZipArchive();
+            $zip->open("file.zip", ZIPARCHIVE::CREATE);
 
             if (isset($_POST["folder"])) {
                 foreach ($_POST["folder"] as $folder) {
-                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFolderInfo($folder)["path"]);
+                    $zip = $this->Zip($zip, getCfgVar("storage") . $fileFacade->getFolderInfo($folder)["path"]);
+                }
+            }
+
+            if (isset($_POST["file"])) {
+                foreach ($_POST["file"] as $file) {
+                    $zip = $this->Zip($zip, getCfgVar("storage") .  $fileFacade->getFileInfo($file)["path"]);
                 }
             }
 
             $zip->close();
 
             header('Content-Type: application/zip');
-            header('Content-disposition: attachment; filename='.$zipname);
-            header('Content-Length: ' . filesize($zipname));
-            readfile($zipname);
+            header('Content-disposition: attachment; filename=file.zip');
+            header('Content-Length: ' . filesize("file.zip"));
+            readfile("file.zip");
+            unlink("file.zip");
+        } else {
+            $this->redirectURL($_POST["backURL"]);
         }
 
-        $this->redirectURL($_POST["backURL"]);
     }
 
     /*
@@ -259,32 +262,36 @@ class ApiController extends AController
 
         if (isset($_POST["file"])) {
             foreach ($_POST["file"] as $file) {
-                $fileInfo = $fileFacade->getFileInfo($file);
-                unlink(getCfgVar("storage") . $fileInfo["path"]);
+                if ($fileFacade->checkFileAccess($file, Session::get("user_ID"))) {
+                    $fileInfo = $fileFacade->getFileInfo($file);
+                    unlink(getCfgVar("storage") . $fileInfo["path"]);
 
-                $fileFacade->removeFile($file, Session::get("user_ID"));
+                    $fileFacade->removeFile($file, Session::get("user_ID"));
+                }
             }
         }
 
 
         if (isset($_POST["folder"])) {
             foreach ($_POST["folder"] as $folder) {
-                $folderInfo = $fileFacade->getFolderInfo($folder);
+                if ($fileFacade->checkFolderAccess($folder, Session::get("user_ID"))) {
+                    $folderInfo = $fileFacade->getFolderInfo($folder);
 
-                $dir = getCfgVar("storage") . $folderInfo["path"];
-                $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
-                $files = new RecursiveIteratorIterator($it,
-                    RecursiveIteratorIterator::CHILD_FIRST);
-                foreach($files as $file) {
-                    if ($file->isDir()){
-                        rmdir($file->getRealPath());
-                    } else {
-                        unlink($file->getRealPath());
+                    $dir = getCfgVar("storage") . $folderInfo["path"];
+                    $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+                    $files = new RecursiveIteratorIterator($it,
+                        RecursiveIteratorIterator::CHILD_FIRST);
+                    foreach($files as $file) {
+                        if ($file->isDir()){
+                            rmdir($file->getRealPath());
+                        } else {
+                            unlink($file->getRealPath());
+                        }
                     }
-                }
-                rmdir($dir);
+                    rmdir($dir);
 
-                $fileFacade->removeFolder($folder, Session::get("user_ID"));
+                    $fileFacade->removeFolder($folder, Session::get("user_ID"));
+                }
             }
         }
 
@@ -354,6 +361,63 @@ class ApiController extends AController
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="'. urlencode("znamky.xlsx").'"');
         $writer->save('php://output');
+    }
+
+    private function Zip(ZipArchive $zip, string $source): ZipArchive
+    {
+        $fileFacade = new FilesFacade();
+        $source = str_replace('\\', '/', realpath($source));
+
+        if (is_dir($source))
+        {
+
+            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
+
+            $arr = explode("/",$source);
+            $maindir = $arr[count($arr)- 1];
+
+            $source = "";
+            for ($i=0; $i < count($arr) - 1; $i++) {
+                $source .= '/' . $arr[$i];
+            }
+
+            $source = substr($source, 1);
+
+            $zip->addEmptyDir($maindir);
+
+            foreach ($files as $file)
+            {
+                $file = str_replace('\\', '/', $file);
+
+                // Ignore "." and ".." folders
+                if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+                    continue;
+
+                $file = realpath($file);
+
+                $file = str_replace('\\', '/', $file);
+                $source = str_replace('\\', '/', $source);
+
+                if (is_dir($file) === true)
+                {
+                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                }
+                else if (is_file($file) === true)
+                {
+                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+//                    $path = explode("/", $file);
+//                    $path = array_pop($path);
+//                    $info = $fileFacade->getFileInfo(explode("-",$path)[0]);
+//                    $zip->renameName(str_replace($source . '/', '', $file), $info["name"]);
+                }
+            }
+        }
+        else if (is_file($source))
+        {
+            $zip->addFromString(basename($source), file_get_contents($source));
+        }
+
+        return $zip;
     }
 
 }

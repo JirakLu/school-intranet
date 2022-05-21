@@ -71,14 +71,34 @@ class FilesRepository
         $folder = $this->db->getAll("SELECT path, folder_ID folderID FROM folder WHERE parent_ID = :folderID AND user_ID = :userID"
             , stdClass::class, [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
 
-        $this->db->exec("DELETE file.* FROM file WHERE folder_ID = :folderID", [new DbParam("folderID", $id)]);
+        $this->db->exec("DELETE file.* FROM file 
+                            JOIN folder f on file.folder_ID = f.folder_ID
+                            WHERE file.folder_ID = :folderID AND f.user_ID = :userID",
+            [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
 
         if (count($folder) > 0) {
             foreach ($folder as $f) {
                 $this->removeFolder($f->folderID, $userID);
             }
         }
-        $this->db->exec("DELETE folder.* FROM folder WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
+        if ($this->db->getValue("SELECT count(*) FROM folder WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)])) {
+            $this->db->exec("DELETE folder.* FROM folder WHERE folder_ID = :folderID AND user_ID = :userID",
+                [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
+        }
+    }
+
+    public function checkFileAccess(string $id, string $userID): bool
+    {
+        return $this->db->getValue("SELECT count(*) 
+                                        FROM file 
+                                        JOIN folder f on f.folder_ID = file.folder_ID
+                                        WHERE file.file_ID = :fileID AND f.user_ID = :userID", [new DbParam("fileID", $id), new DbParam("userID", $userID)]);
+    }
+
+    public function checkFolderAccess(string $id, string $userID): bool
+    {
+        return $this->db->getValue("SELECT count(*) FROM folder 
+                                        WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
     }
 
     public function getMenu(string $id): array

@@ -66,5 +66,15 @@ class FilesFacade
         return $this->fileRepo->addFile($name, $parent, $fileType);
     }
 
+    public function checkFileAccess(string $id, string $userID): bool
+    {
+        return $this->fileRepo->checkFileAccess($id, $userID);
+    }
+
+    public function checkFolderAccess(string $id, string $userID): bool
+    {
+        return $this->fileRepo->checkFolderAccess($id, $userID);
+    }
+
 
 }
