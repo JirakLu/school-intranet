@@ -172,19 +172,19 @@ class ApiController extends AController
         $fileFacade = new FilesFacade();
 
         if (isset($_POST["file"]) || isset($_POST["folder"])) {
-            $zipname = 'C:\wamp64\www\school-intranet\storage\file.zip';
+            $zipname = 'file.zip';
             $zip = new ZipArchive;
             $zip->open($zipname, ZipArchive::CREATE);
 
             if (isset($_POST["file"])) {
                 foreach ($_POST["file"] as $file) {
-                    $zip->addFile("C:\wamp64\www\school-intranet\storage" . $fileFacade->getFilePath($file));
+                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFilePath($file));
                 }
             }
 
             if (isset($_POST["folder"])) {
                 foreach ($_POST["folder"] as $folder) {
-                    $zip->addFile("C:\wamp64\www\school-intranet\storage" . $fileFacade->getFolderPath($folder));
+                    $zip->addFile(getCfgVar("storage") . $fileFacade->getFolderPath($folder));
                 }
             }
 
@@ -214,7 +214,7 @@ class ApiController extends AController
     {
         $fileFacade = new FilesFacade();
         $path = $fileFacade->addFile($_FILES["upload"]["name"], $_POST["parent"], $_FILES["upload"]["type"]);
-        move_uploaded_file($_FILES["upload"]["tmp_name"], "C:\wamp64\www\school-intranet\storage" . $path);
+        move_uploaded_file($_FILES["upload"]["tmp_name"], getCfgVar("storage") . $path);
 
         $this->redirectURL($_POST["backURL"]);
     }
@@ -229,7 +229,7 @@ class ApiController extends AController
     {
         $fileFacade = new FilesFacade();
         $folder = $fileFacade->createFolder($_POST["parent"], $_POST["name"], Session::get("user_ID"), isset($_POST["private"]));
-        mkdir("C:\wamp64\www\school-intranet\storage" . $folder);
+        mkdir(getCfgVar("storage") . $folder);
 
         $this->redirectURL($_POST["backURL"]);
     }
@@ -259,7 +259,7 @@ class ApiController extends AController
 
     private function sendFile(string $file): void
     {
-        $file = "C:\wamp64\www\school-intranet\storage" . $file;
+        $file = getCfgVar("storage") . $file;
         if (file_exists($file)) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');

@@ -62,7 +62,7 @@ class FilesRepository
                 JOIN folder f on file.folder_ID = f.folder_ID
                 WHERE file.file_ID = :fileID AND f.user_ID = :userID";
         $this->db->exec($sql, [new DbParam("fileID", $id), new DbParam("userID", $userID)]);
-        unlink("C:\wamp64\www\school-intranet\storage" . $path);
+        unlink(getCfgVar("storage") . $path);
 
     }
 

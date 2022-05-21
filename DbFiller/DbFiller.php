@@ -197,7 +197,7 @@ class DbFiller
         $test = file_get_contents("https://randomuser.me/api/?results=$count&password=upper,lower,18&inc=email,name,login&nat=US");
         $json = json_decode($test, true);
         $users = array_map(function ($user) {
-            $password = password_hash($user["login"]["password"] . get_cfg_var("pepper"), PASSWORD_ARGON2ID);
+            $password = password_hash($user["login"]["password"] . getCfgVar("pepper"), PASSWORD_ARGON2ID);
             return ["email" => $user["email"], "firstName" => $user["name"]["first"],
                 "lastName" => $user["name"]["last"], "passwordHash" => $password, "password" => $user["login"]["password"]];
         }, $json["results"]);

@@ -25,7 +25,7 @@ class AuthService {
         $user = $this->userFacade->getUserByEmail($email);
 
         if ($user) {
-            if (password_verify($password . get_cfg_var("pepper"), $user->getPassword())) {
+            if (password_verify($password . getCfgVar("pepper"), $user->getPassword())) {
                 $this->signInSuccess($user);
                 return true;
             }

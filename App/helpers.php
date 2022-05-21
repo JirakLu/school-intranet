@@ -57,4 +57,13 @@ if (!function_exists("calculateAverage")) {
     }
 }
 
+if (!function_exists("getCfgVar")) {
+
+    function getCfgVar(string $option): mixed
+    {
+        $config = parse_ini_file(__DIR__ . "/../config/app.ini", true, INI_SCANNER_RAW);
+        return $config[$option];
+    }
+}
+
 
