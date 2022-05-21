@@ -1,7 +1,7 @@
 @extends("layout.layout_private")
 
 @section("content")
-    <div class="py-6">
+    <div x-data="{form: document.querySelector('#form'), newFolderModal: false}" class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <h1 class="text-3xl lg:text-4xl font-semibold text-gray-900">Soubory</h1>
         </div>
@@ -10,7 +10,60 @@
             <div class="py-4">
                 <div class="flex flex-col gap-5 px-4 py-5 bg-white overflow-hidden sm:p-6">
                     <div class="flex gap-4 justify-end bg-white border border-gray-200 rounded-lg py-3 px-5 shadow-md">
-                        <div class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
+
+                        @if($access)
+                            {{--            DELETE            --}}
+
+                            <div @click="form.setAttribute('action',form.getAttribute('action') + '/delete'); form.submit()"
+                                 class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </div>
+
+                            {{--            NEW FOLDER            --}}
+
+                            <div @click="newFolderModal = !newFolderModal"
+                                 class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            {{--            UPLOAD            --}}
+                            <template x-if="window.location.href.split('/').pop() !== 'files'">
+                                <form action="{{$createLink('api/files/upload')}}" method="POST"
+                                      enctype="multipart/form-data">
+                                    <label for="upload"
+                                           class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700"
+                                             fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                        </svg>
+                                    </label>
+                                    <input type="file" id="upload" name="upload" class="sr-only"
+                                           onchange="form.submit()">
+                                    <input type="text" name="parent" id="parent"
+                                           x-bind:value="window.location.href.split('/').pop() !== 'files' ? window.location.href.split('/').pop() : ''"
+                                           class="hidden">
+                                    <input type="text" name="backURL" id="backURL" x-bind:value="window.location.href"
+                                           class="hidden">
+                                </form>
+                            </template>
+                        @endif
+
+                        {{--            DOWNLOAD            --}}
+
+                        <div @click="form.setAttribute('action',form.getAttribute('action') + '/download'); form.submit()"
+                             class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -19,32 +72,18 @@
                             </svg>
                         </div>
 
-                        <div class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
+
+                        {{--            REALOAD            --}}
+                        <div @click="window.location.reload()"
+                             class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                         </div>
 
-                        <div class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
-                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                        </div>
-
-                        <div class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
-                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
                     </div>
 
                     <nav class="flex" aria-label="Breadcrumb">
@@ -74,7 +113,7 @@
                                                 <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z"/>
                                             </svg>
                                             <a href="{{$createLink("files/" . $item[1])}}"
-                                               class="capitalize ml-4 text-sm hover:text-gray-700 {{$item[0] ? 'text-indigo-500 font-bold' : 'font-medium text-gray-500'}}">{{$key}}</a>
+                                               class="ml-4 text-sm hover:text-gray-700 {{$item[0] ? 'text-indigo-500 font-bold' : 'font-medium text-gray-500'}}">{{$key}}</a>
                                         </div>
                                     </li>
                                 @endif
@@ -82,15 +121,16 @@
                         </ol>
                     </nav>
 
-                    <form action="{{$createLink("api/folder")}}" method="POST"
+                    <form action="{{$createLink("api/files")}}" method="POST" id="form"
                           class="border border-gray-200 bg-white rounded-lg py-3 px-5 shadow-md">
+                        <input type="text" name="backURL" id="backURL" x-bind:value="window.location.href" class="hidden">
                         <fieldset>
                             <legend class="sr-only">Složky</legend>
                             <div class="flex gap-8 flex-wrap">
 
                                 @if(empty($folders) && empty($files))
                                     <div class="px-4 py-2">
-                                        <span class="text-2xl leading-7 font-semibold">Máš tu nějak prázdno 🤔</span>
+                                        <span class="text-2xl leading-7 font-semibold">Je tu nějak prázdno 🤔</span>
                                     </div>
                                 @endif
 
@@ -106,16 +146,17 @@
                                             <path style="fill:#EBBA16;" d="M50.268,12.5H25l-5-7H1.732C0.776,5.5,0,6.275,0,7.232V49.96c0.069,0.002,0.138,0.006,0.205,0.01
                                                 l10.015-27.314c0.184-0.683,0.803-1.156,1.51-1.156H52v-7.268C52,13.275,51.224,12.5,50.268,12.5z"/>
                                     </svg>
-                                        <span class="text-sm text-gray-700 font-semibold capitalize">{{$folder->getName()}}</span>
+                                        <span class="text-sm text-gray-700 font-semibold">{{$folder->getName()}}</span>
 
-                                        <input id="folder-{{$folder->getFolderID()}}" name="folder-{{$folder->getFolderID()}}" value="folder-{{$folder->getFolderID()}}"
+                                        <input id="folder-{{$folder->getFolderID()}}" name="folder[]"
+                                               value="{{$folder->getFolderID()}}"
                                                type="checkbox"
                                                class="absolute top-0.5 right-0.5 focus:!ring-0 focus:!outline-0 h-4 w-4 text-amber-600 border-gray-300 rounded">
                                     </label>
                                 @endforeach
 
                                 @foreach($files as $file)
-                                    <label @dblclick="window.location = '{{$createLink("api/file/" . $file->getFileID())}}'"
+                                    <label @dblclick="document.querySelector('#file-sender > input').value = {{$file->getFileID()}}; document.querySelector('#file-sender').submit()"
                                            for="file-{{$file->getFileID()}}"
                                            class="relative cursor-pointer flex items-center justify-center flex-col gap-1 p-2 pt-3">
                                         <svg class="h-16 w-16" viewBox="0 0 48 48"
@@ -130,9 +171,10 @@
                                             </g>
                                         </svg>
 
-                                        <span class="text-sm text-gray-700 font-semibold capitalize">{{$file->getName()}}.<span class="lowercase">{{$file->getFileType()}}</span></span>
+                                        <span class="text-sm text-gray-700 font-semibold">{{$file->getName()}}</span>
 
-                                        <input id="file-{{$file->getFileID()}}" name="file-{{$file->getFileID()}}" value="file-{{$file->getFileID()}}"
+                                        <input id="file-{{$file->getFileID()}}" name="file[]"
+                                               value="{{$file->getFileID()}}"
                                                type="checkbox"
                                                class="absolute top-0.5 right-0.5 focus:!ring-0 focus:!outline-0 h-4 w-4 text-blue-500 border-gray-300 rounded">
                                     </label>
@@ -145,5 +187,17 @@
             </div>
             <!-- /End replace -->
         </div>
+
+        @foreach($files as $file)
+            <form class="hidden sr-only" id="file-sender"
+                  action="{{$createLink('api/files/getFile')}}" method="post">
+                <input type="text" name="file" id="file"
+                       class="hidden">
+                <input type="text" name="backURL" id="backURL"
+                       x-bind:value="window.location.href" class="hidden">
+            </form>
+        @endforeach
+
+        @include("components.newFolderModal")
     </div>
 @endsection

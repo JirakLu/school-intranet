@@ -4,6 +4,7 @@ namespace App\Models\Files;
 
 use App\Models\DB\Db;
 use App\Models\DB\DbParam;
+use PDO;
 
 
 class FilesRepository
@@ -19,31 +20,50 @@ class FilesRepository
         $this->db = Db::getInstance();
     }
 
+    public function checkAccess(string $id, string $userID): bool
+    {
+        return !!$this->db->getValue("SELECT COUNT(*) FROM folder WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
+    }
+
     public function getRootFolders(string $userID): array
     {
-        $sql = "SELECT folder_ID folderID, name, path, private, parentID, user_ID userID
+        $sql = "SELECT folder_ID folderID, name, path, private, parent_ID parentID, user_ID userID
                 FROM folder
-                WHERE parentID IS NULL AND (private = 0 OR (private = 1 AND user_ID = :userID))";
+                WHERE parent_ID IS NULL AND (private = 0 OR (private = 1 AND user_ID = :userID))";
+
 
         return $this->db->getAll($sql, FolderEntity::class, [new DbParam("userID", $userID)]);
     }
 
     public function getFolders(string $id, string $userID): array
     {
-        $sql = "SELECT folder_ID folderID, name, path, private, parentID, user_ID userID
+        $sql = "SELECT folder_ID folderID, name, path, private, parent_ID parentID, user_ID userID
                 FROM folder
-                WHERE parentID = :id AND (private = 0 OR (private = 1 AND user_ID = :userID))";
+                WHERE parent_ID = :id AND (private = 0 OR (private = 1 AND user_ID = :userID))";
 
         return $this->db->getAll($sql, FolderEntity::class, [new DbParam("id", $id), new DbParam("userID", $userID)]);
     }
 
     public function getFiles(string $id): array
     {
-        $sql = "SELECT filer_ID fileID, name, path, file_type fileType, folder_ID folderID
+        $sql = "SELECT file_ID fileID, name, path, file_type fileType, folder_ID folderID
                 FROM file
                 WHERE folder_ID = :id";
 
         return $this->db->getAll($sql, FileEntity::class, [new DbParam("id", $id)]);
+    }
+
+    public function removeFile(string $id, string $userID): void
+    {
+        $path = $this->db->getValue("SELECT file.path FROM file JOIN folder f on f.folder_ID = file.folder_ID WHERE file.file_ID = :fileID AND f.user_ID = :userID",
+            [new DbParam("fileID", $id), new DbParam("userID", $userID)]);
+
+        $sql = "DELETE file.* FROM file 
+                JOIN folder f on file.folder_ID = f.folder_ID
+                WHERE file.file_ID = :fileID AND f.user_ID = :userID";
+        $this->db->exec($sql, [new DbParam("fileID", $id), new DbParam("userID", $userID)]);
+        unlink("C:\wamp64\www\school-intranet\storage" . $path);
+
     }
 
     public function getMenu(string $id): array
@@ -59,11 +79,11 @@ class FilesRepository
 
     private function getParent(string $id): void
     {
-        $sql = "SELECT folder_ID folderID, name, path, private, parentID, user_ID userID
+        $sql = "SELECT folder_ID folderID, name, path, private, parent_ID parentID, user_ID userID
                 FROM folder
                 WHERE folder_ID= :id";
         /* @var $folder FolderEntity */
-        $folder = $this->db->getOne($sql, FolderEntity::class,[new DbParam("id", $id)]);
+        $folder = $this->db->getOne($sql, FolderEntity::class, [new DbParam("id", $id)]);
 
         if ($folder->getParentID()) {
             $this->tempMenu[$folder->getName()] = [$id == $this->tempID, $folder->getFolderID()];
@@ -71,5 +91,48 @@ class FilesRepository
         } else {
             $this->tempMenu[$folder->getName()] = [$id == $this->tempID, $folder->getFolderID()];
         }
+    }
+
+    public function getFilePath(string $id): string
+    {
+        return $this->db->getValue("SELECT path FROM file WHERE file_ID = :id", [new DbParam("id", $id)]);
+    }
+
+    public function getFolderPath(string $id): string
+    {
+        return $this->db->getValue("SELECT path FROM folder WHERE folder_ID = :id", [new DbParam("id", $id)]);
+    }
+
+    public function createFolder(string $parent, string $name, string $userID, bool $private): string
+    {
+        $path = "";
+        if ($parent) {
+            $path = $this->db->getValue("SELECT path FROM folder WHERE folder_ID = :folderID", [new DbParam("folderID", $parent)]);
+        }
+
+        $sql = "INSERT INTO folder SET name = :name, path = '', private = :private, parent_ID = (SELECT folder_ID FROM folder f WHERE f.folder_ID = :parent LIMIT 1), user_ID = :user";
+        $this->db->exec($sql, [new DbParam("name", $name), new DbParam("private", $private ? 1 : 0, PDO::PARAM_INT),
+            new DbParam("parent", $parent), new DbParam("user", $userID)]);
+
+        $name = "/" . $this->db->lastInsertID() . "-" . $name;
+        $name = strtolower($name);
+        $this->db->exec("UPDATE folder SET path = :path WHERE folder_ID = :folder", [new DbParam("path", $path . $name), new DbParam("folder", $this->db->lastInsertID())]);
+
+        return $path . $name;
+    }
+
+    public function addFile(string $name, string $parent, string $fileType): string
+    {
+        $path = $this->db->getValue("SELECT path FROM folder WHERE folder_ID = :folderID", [new DbParam("folderID", $parent)]);
+
+        $sql = "INSERT INTO file SET name = :name, path = '', file_type = :fileType, folder_ID = (SELECT folder_ID FROM folder WHERE folder_ID = :parent LIMIT 1)";
+        $this->db->exec($sql, [new DbParam("name", $name), new DbParam("fileType", $fileType), new DbParam("parent", $parent)]);
+
+        $name = "/" . $this->db->lastInsertID() . "-" . $name;
+        $name = strtolower($name);
+
+        $this->db->exec("UPDATE file SET path = :path WHERE file_ID = :file", [new DbParam("path", $path . $name), new DbParam("file", $this->db->lastInsertID())]);
+
+        return $path . $name;
     }
 }

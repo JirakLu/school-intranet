@@ -2,10 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Models\Files\FilesFacade;
 use App\Models\Mark\MarkFacade;
 use App\Session;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use ZipArchive;
 
 class ApiController extends AController
 {
@@ -145,6 +147,132 @@ class ApiController extends AController
         }
     }
 
+    /*
+    [file] => 1
+    [back] => ''
+     */
+    public function getFile(): void
+    {
+        $fileFacade = new FilesFacade();
+        $path = $fileFacade->getFilePath($_POST["file"]);
+
+        $this->sendFile($path);
+    }
+
+    /*
+    [folder] => Array
+            [0] => 5
+            [1] => 6
+    [file] => Array
+            [0] => 2
+    [backURL] => ''
+     */
+    public function download(): void
+    {
+        $fileFacade = new FilesFacade();
+
+        if (isset($_POST["file"]) || isset($_POST["folder"])) {
+            $zipname = 'C:\wamp64\www\school-intranet\storage\file.zip';
+            $zip = new ZipArchive;
+            $zip->open($zipname, ZipArchive::CREATE);
+
+            if (isset($_POST["file"])) {
+                foreach ($_POST["file"] as $file) {
+                    $zip->addFile("C:\wamp64\www\school-intranet\storage" . $fileFacade->getFilePath($file));
+                }
+            }
+
+            if (isset($_POST["folder"])) {
+                foreach ($_POST["folder"] as $folder) {
+                    $zip->addFile("C:\wamp64\www\school-intranet\storage" . $fileFacade->getFolderPath($folder));
+                }
+            }
+
+            $zip->close();
+
+            header('Content-Type: application/zip');
+            header('Content-disposition: attachment; filename='.$zipname);
+            header('Content-Length: ' . filesize($zipname));
+            readfile($zipname);
+        }
+
+        $this->redirectURL($_POST["backURL"]);
+    }
+
+    /*
+    [parent] => 2
+
+    [upload] => Array
+            [name] => Webovky.txt
+            [full_path] => Webovky.txt
+            [type] => text/plain
+            [tmp_name] => C:\wamp64\tmp\php98F3.tmp
+            [error] => 0
+            [size] => 0
+     */
+    public function upload(): void
+    {
+        $fileFacade = new FilesFacade();
+        $path = $fileFacade->addFile($_FILES["upload"]["name"], $_POST["parent"], $_FILES["upload"]["type"]);
+        move_uploaded_file($_FILES["upload"]["tmp_name"], "C:\wamp64\www\school-intranet\storage" . $path);
+
+        $this->redirectURL($_POST["backURL"]);
+    }
+
+    /*
+    [parent] => 1 | ''
+    [name] => Pepa
+    ??[private] => private
+    ["backURL"] => ''
+     */
+    public function createFolder(): void
+    {
+        $fileFacade = new FilesFacade();
+        $folder = $fileFacade->createFolder($_POST["parent"], $_POST["name"], Session::get("user_ID"), isset($_POST["private"]));
+        mkdir("C:\wamp64\www\school-intranet\storage" . $folder);
+
+        $this->redirectURL($_POST["backURL"]);
+    }
+
+    /*
+    [folder] => Array
+            [0] => 4
+            [1] => 5
+            [2] => 6
+    [file] => Array
+            [0] => 1
+            [1] => 2
+    [backURL] => ''
+     */
+    public function deleteFiles(): void
+    {
+        $fileFacade = new FilesFacade();
+
+        foreach ($_POST["file"] as $file) {
+            $fileFacade->removeFile($file, Session::get("user_ID"));
+        }
+
+        foreach ($_POST["folder"] as $folder) {
+            $fileFacade->removeFolder($folder, Session::get("user_ID"));
+        }
+    }
+
+    private function sendFile(string $file): void
+    {
+        $file = "C:\wamp64\www\school-intranet\storage" . $file;
+        if (file_exists($file)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
+            exit;
+        }
+    }
+
     private function generateExcel(array $marks): void {
         $subjectName = array_shift($marks);
 
@@ -152,7 +280,7 @@ class ApiController extends AController
         $marksWidth = 1;
 
         foreach ($marks as $mark) {
-            if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"] ) + 1;
+            if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"] ) + 2;
         }
 
         $spreadsheet = new Spreadsheet();

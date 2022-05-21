@@ -10,7 +10,7 @@ class FileEntity
     private string $path;
     private string $fileType;
     private string $userID;
-    private string|null $folderID;
+    private string|null $folderID = null;
 
     /**
      * @return string

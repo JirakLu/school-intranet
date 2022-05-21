@@ -10,7 +10,7 @@ class FolderEntity
     private string $path;
     private bool $private;
     private string $userID;
-    private string|null $parentID;
+    private string|null $parentID = null;
 
     /**
      * @return string

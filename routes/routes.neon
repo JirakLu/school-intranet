@@ -53,6 +53,7 @@
 
 #API
 
+#MARKS
 "/api/marks/edit":
     defaults: "ApiController:edit"
 
@@ -68,11 +69,29 @@
 "/api/marks/export":
     defaults: "ApiController:export"
 
+#CATEGORY
 "/api/category/addCategory":
     defaults: "ApiController:addCategory"
 
 "/api/category/removeCategory":
     defaults: "ApiController:removeCategory"
+
+#FILES
+"/api/files/getFile":
+    defaults: "ApiController:getFile"
+
+"/api/files/download":
+    defaults: "ApiController:download"
+
+"/api/files/upload":
+    defaults: "ApiController:upload"
+
+"/api/files/delete":
+    defaults: "ApiController:deleteFiles"
+
+"/api/files/createFolder":
+    defaults: "ApiController:createFolder"
+
 
 #DB FILLER
 
