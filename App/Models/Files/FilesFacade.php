@@ -76,5 +76,19 @@ class FilesFacade
         return $this->fileRepo->checkFolderAccess($id, $userID);
     }
 
+    public function checkFolderPrivate(string $id, string $userID): bool
+    {
+        if ($this->fileRepo->checkFolderPrivate($id)) {
+            return $this->checkFolderAccess($id, $userID);
+        }
+        return true;
+    }
+
+    public function checkFilePrivate(string $id, string $userID): bool
+    {
+        $parentID = $this->getFileInfo($id)["folderID"];
+        return $this->checkFolderPrivate($parentID, $userID);
+    }
+
 
 }

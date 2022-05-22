@@ -162,8 +162,8 @@ class ApiController extends AController
     public function getFile(): void
     {
         $fileFacade = new FilesFacade();
-        $info = $fileFacade->getFileInfo($_POST["file"]);
 
+        $info = $fileFacade->getFileInfo($_POST["file"]);
         $this->sendFile($info["path"], $info["name"]);
 
         $this->redirectURL($_POST["backURL"]);
@@ -188,13 +188,15 @@ class ApiController extends AController
 
             if (isset($_POST["folder"])) {
                 foreach ($_POST["folder"] as $folder) {
-                    $zip = $this->Zip($zip, getCfgVar("storage") . $fileFacade->getFolderInfo($folder)["path"]);
+                    if ($fileFacade->checkFolderPrivate($folder, Session::get("user_ID"))) {
+                        $zip = $this->Zip($zip, getCfgVar("storage") . $fileFacade->getFolderInfo($folder)["path"]);
+                    }
                 }
             }
 
             if (isset($_POST["file"])) {
                 foreach ($_POST["file"] as $file) {
-                    $zip = $this->Zip($zip, getCfgVar("storage") .  $fileFacade->getFileInfo($file)["path"]);
+                    $zip = $this->Zip($zip, getCfgVar("storage") . $fileFacade->getFileInfo($file)["path"]);
                 }
             }
 
@@ -240,7 +242,13 @@ class ApiController extends AController
     public function createFolder(): void
     {
         $fileFacade = new FilesFacade();
-        $folder = $fileFacade->createFolder($_POST["parent"], $_POST["name"], Session::get("user_ID"), isset($_POST["private"]));
+
+        if ($_POST["parent"]) {
+            $info = $fileFacade->getFolderInfo($_POST["parent"]);
+            $folder = $fileFacade->createFolder($_POST["parent"], $_POST["name"], Session::get("user_ID"), $info["private"] === 1 ? 1 : isset($_POST["parent"]));
+        } else {
+            $folder = $fileFacade->createFolder($_POST["parent"], $_POST["name"], Session::get("user_ID"), isset($_POST["private"]));
+        }
         mkdir(getCfgVar("storage") . $folder);
 
         $this->redirectURL($_POST["backURL"]);
@@ -281,8 +289,8 @@ class ApiController extends AController
                     $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
                     $files = new RecursiveIteratorIterator($it,
                         RecursiveIteratorIterator::CHILD_FIRST);
-                    foreach($files as $file) {
-                        if ($file->isDir()){
+                    foreach ($files as $file) {
+                        if ($file->isDir()) {
                             rmdir($file->getRealPath());
                         } else {
                             unlink($file->getRealPath());
@@ -302,7 +310,7 @@ class ApiController extends AController
     {
 
         $file = getCfgVar("storage") . $path;
-        if(file_exists($file)){
+        if (file_exists($file)) {
 
             //Get file type and set it as Content Type
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -310,7 +318,7 @@ class ApiController extends AController
             finfo_close($finfo);
 
             //Use Content-Disposition: attachment to specify the filename
-            header('Content-Disposition: attachment; filename='.$name);
+            header('Content-Disposition: attachment; filename=' . $name);
 
             //No cache
             header('Expires: 0');
@@ -327,14 +335,15 @@ class ApiController extends AController
         }
     }
 
-    private function generateExcel(array $marks): void {
+    private function generateExcel(array $marks): void
+    {
         $subjectName = array_shift($marks);
 
         $alphabet = range('A', 'Z');
         $marksWidth = 1;
 
         foreach ($marks as $mark) {
-            if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"] ) + 2;
+            if (count($mark["marks"]) > $marksWidth) $marksWidth = count($mark["marks"]) + 2;
         }
 
         $spreadsheet = new Spreadsheet();
@@ -343,23 +352,23 @@ class ApiController extends AController
 
         $row = 1;
         foreach ($marks as $name => $markInfo) {
-            $sheet->setCellValue($alphabet[0].$row, $name);
+            $sheet->setCellValue($alphabet[0] . $row, $name);
 
             for ($i = 0; $i < $marksWidth; $i++) {
-                $sheet->setCellValue($alphabet[$i+1].$row, key_exists($i ,$markInfo["marks"]) ? $markInfo["marks"][$i] : '');
+                $sheet->setCellValue($alphabet[$i + 1] . $row, key_exists($i, $markInfo["marks"]) ? $markInfo["marks"][$i] : '');
             }
 
-            $sheet->setCellValue($alphabet[$marksWidth+1].$row, $markInfo["averageRounded"]);
-            $sheet->setCellValue($alphabet[$marksWidth+2].$row, $markInfo["average"]);
+            $sheet->setCellValue($alphabet[$marksWidth + 1] . $row, $markInfo["averageRounded"]);
+            $sheet->setCellValue($alphabet[$marksWidth + 2] . $row, $markInfo["average"]);
 
             $row++;
         }
-        $sheet->getStyle($alphabet[1] . ":" . $alphabet[$marksWidth+2])->getAlignment()->setHorizontal('center');
+        $sheet->getStyle($alphabet[1] . ":" . $alphabet[$marksWidth + 2])->getAlignment()->setHorizontal('center');
         $sheet->getColumnDimension('A')->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="'. urlencode("znamky.xlsx").'"');
+        header('Content-Disposition: attachment; filename="' . urlencode("znamky.xlsx") . '"');
         $writer->save('php://output');
     }
 
@@ -368,16 +377,15 @@ class ApiController extends AController
         $fileFacade = new FilesFacade();
         $source = str_replace('\\', '/', realpath($source));
 
-        if (is_dir($source))
-        {
+        if (is_dir($source)) {
 
             $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
 
-            $arr = explode("/",$source);
-            $maindir = $arr[count($arr)- 1];
+            $arr = explode("/", $source);
+            $maindir = $arr[count($arr) - 1];
 
             $source = "";
-            for ($i=0; $i < count($arr) - 1; $i++) {
+            for ($i = 0; $i < count($arr) - 1; $i++) {
                 $source .= '/' . $arr[$i];
             }
 
@@ -385,12 +393,11 @@ class ApiController extends AController
 
             $zip->addEmptyDir($maindir);
 
-            foreach ($files as $file)
-            {
+            foreach ($files as $file) {
                 $file = str_replace('\\', '/', $file);
 
                 // Ignore "." and ".." folders
-                if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+                if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
                     continue;
 
                 $file = realpath($file);
@@ -398,23 +405,32 @@ class ApiController extends AController
                 $file = str_replace('\\', '/', $file);
                 $source = str_replace('\\', '/', $source);
 
-                if (is_dir($file) === true)
-                {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                }
-                else if (is_file($file) === true)
-                {
-                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
-//                    $path = explode("/", $file);
-//                    $path = array_pop($path);
-//                    $info = $fileFacade->getFileInfo(explode("-",$path)[0]);
-//                    $zip->renameName(str_replace($source . '/', '', $file), $info["name"]);
+                if (is_dir($file)) {
+                    $temp = explode("/", $file);
+                    $temp = array_pop($temp);
+                    $temp = explode("-", $temp)[0];
+
+                    if ($fileFacade->checkFolderPrivate($temp, Session::get("user_ID"))) {
+                        $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                    }
+                } else if (is_file($file)) {
+                    $temp = explode("/", $file);
+                    $temp = array_pop($temp);
+                    $temp = explode("-", $temp)[0];
+
+                    if ($fileFacade->checkFilePrivate($temp, Session::get("user_ID"))) {
+                        $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                    }
                 }
             }
-        }
-        else if (is_file($source))
-        {
-            $zip->addFromString(basename($source), file_get_contents($source));
+        } else if (is_file($source)) {
+            $temp = explode("/", $source);
+            $temp = array_pop($temp);
+            $temp = explode("-", $temp)[0];
+
+            if ($fileFacade->checkFilePrivate($temp, Session::get("user_ID"))) {
+                $zip->addFromString(basename($source), file_get_contents($source));
+            }
         }
 
         return $zip;

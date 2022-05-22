@@ -101,6 +101,11 @@ class FilesRepository
                                         WHERE folder_ID = :folderID AND user_ID = :userID", [new DbParam("folderID", $id), new DbParam("userID", $userID)]);
     }
 
+    public function checkFolderPrivate(string $id): bool
+    {
+        return $this->db->getValue("SELECT count(*) FROM folder WHERE folder_ID = :folderID AND private = 1", [new DbParam("folderID", $id)]);
+    }
+
     public function getMenu(string $id): array
     {
         $this->tempMenu = [];
@@ -130,14 +135,14 @@ class FilesRepository
 
     public function getFileInfo(string $id): array
     {
-        $file = $this->db->getOne("SELECT path, name FROM file WHERE file_ID = :id", stdClass::class, [new DbParam("id", $id)]);
-        return ["path" => $file->path, "name" => $file->name];
+        $file = $this->db->getOne("SELECT path, name, folder_ID folderID FROM file WHERE file_ID = :id", stdClass::class, [new DbParam("id", $id)]);
+        return ["path" => $file->path, "name" => $file->name, "folderID" => $file->folderID];
     }
 
     public function getFolderInfo(string $id): array
     {
-        $folder = $this->db->getOne("SELECT path, name FROM folder WHERE folder_ID = :id", stdClass::class, [new DbParam("id", $id)]);
-        return ["path" => $folder->path, "name" => $folder->name];
+        $folder = $this->db->getOne("SELECT path, name, private FROM folder WHERE folder_ID = :id", stdClass::class, [new DbParam("id", $id)]);
+        return ["path" => $folder->path, "name" => $folder->name, "private" => $folder->private];
     }
 
     public function createFolder(string $parent, string $name, string $userID, bool $private): string
