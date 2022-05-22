@@ -78,8 +78,8 @@ class MarkFacade
         $this->markRepo->removeCategory($categoryID, $userID);
     }
 
-    public function exportMarksForTeacher(string $courseID, string $userID): array {
-        return $this->markRepo->exportMarksForTeacher($courseID, $userID);
+    public function exportMarksForTeacher(string $courseID): array {
+        return $this->markRepo->exportMarksForTeacher($courseID);
     }
 
     public function exportMarksForStudent(string $userID): array {

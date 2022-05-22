@@ -140,15 +140,13 @@ class ApiController extends AController
 
         if ($_POST["courseID"]) {
             // teacher export
-            if (!$markFacade->checkAccessCourseID(Session::get("user_ID"), $_POST["courseID"])) $this->redirect("restricted");
-            $marks = $markFacade->exportMarksForTeacher($_POST["courseID"], $_POST["userID"]);
-            $this->generateExcel($marks);
+            $marks = $markFacade->exportMarksForTeacher($_POST["courseID"]);
 
         } else {
             // student export
             $marks = $markFacade->exportMarksForStudent($_POST["userID"]);
-            $this->generateExcel($marks);
         }
+        $this->generateExcel($marks);
     }
 
 
