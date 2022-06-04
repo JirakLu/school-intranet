@@ -310,22 +310,14 @@ class ApiController extends AController
         $file = getCfgVar("storage") . $path;
         if (file_exists($file)) {
 
-            //Get file type and set it as Content Type
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             header('Content-Type: ' . finfo_file($finfo, $file));
             finfo_close($finfo);
-
-            //Use Content-Disposition: attachment to specify the filename
             header('Content-Disposition: attachment; filename=' . $name);
-
-            //No cache
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-
-            //Define file size
             header('Content-Length: ' . filesize($file));
-
             ob_clean();
             flush();
             readfile($file);
@@ -394,7 +386,6 @@ class ApiController extends AController
             foreach ($files as $file) {
                 $file = str_replace('\\', '/', $file);
 
-                // Ignore "." and ".." folders
                 if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
                     continue;
 
