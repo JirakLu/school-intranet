@@ -14,7 +14,7 @@
                         @if($access)
                             {{--            DELETE            --}}
 
-                            <div @click="form.setAttribute('action',form.getAttribute('action') + '/delete'); form.submit()"
+                            <div @click="form.setAttribute('action','{{$createLink('api/files/delete')}}'); form.submit()"
                                  class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
@@ -62,7 +62,7 @@
 
                         {{--            DOWNLOAD            --}}
 
-                        <div @click="form.setAttribute('action',form.getAttribute('action') + '/download'); form.submit()"
+                        <div @click="form.setAttribute('action','{{$createLink('api/files/download')}}'); form.submit()"
                              class="flex items-center justify-center p-1 border-[3px] border-indigo-500 rounded-lg cursor-pointer group hover:border-indigo-700">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5 text-indigo-500 font-bold group-hover:text-indigo-700" fill="none"
